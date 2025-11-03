@@ -1,7 +1,13 @@
 import type { ColumnDef } from "@tanstack/react-table";
+import { TableCell } from "../components/table-cell";
 import type { TableRow } from "../services/get-table";
 
-export const generateColumnsFromData = (data: TableRow[]): ColumnDef<TableRow>[] => {
+export const generateColumnsFromData = (
+	data: TableRow[],
+	onCellChange: (rowId: string, columnKey: string, newValue: unknown) => void,
+	getCellValue: (rowId: string, columnKey: string, originalValue: unknown) => unknown,
+	isCellChanged: (rowId: string, columnKey: string) => boolean,
+): ColumnDef<TableRow>[] => {
 	if (!data || data.length === 0) {
 		return [];
 	}
@@ -13,16 +19,23 @@ export const generateColumnsFromData = (data: TableRow[]): ColumnDef<TableRow>[]
 		accessorKey: key,
 		header: key,
 		cell: (info) => {
-			const value = info.getValue();
-			if (value instanceof Date) {
-				return value.toLocaleString();
+			const rowId = info.row.id;
+			const originalValue = info.getValue();
+			const currentValue = getCellValue(rowId, key, originalValue);
+			const isChanged = isCellChanged(rowId, key);
+
+			// Don't make Date or complex objects editable
+			if (originalValue instanceof Date) {
+				return originalValue.toLocaleString();
 			}
 
-			if (typeof value === "object" && value !== null) {
-				return JSON.stringify(value);
+			if (typeof originalValue === "object" && originalValue !== null) {
+				return JSON.stringify(originalValue);
 			}
 
-			return <span className="truncate block">{String(value ?? "")}</span>;
+			return (
+				<TableCell value={currentValue} rowId={rowId} columnKey={key} isChanged={isChanged} onChange={onCellChange} />
+			);
 		},
 	}));
 };

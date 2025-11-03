@@ -2,6 +2,7 @@
 - [x] resize
 - [ ] actions row
 - [ ] input fields
+- [ ] sort by col
 - [ ] sidebar 
   - [ ] select outside to close
   - [ ] save the open/close status in cookies

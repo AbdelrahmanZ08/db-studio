@@ -7,17 +7,23 @@ import {
 	getPaginationRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { Plus, RefreshCcw, Search } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Plus, RefreshCcw, Save, Search } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { getTablePage, type TableRow } from "../services/get-table";
 import { generateColumnsFromData } from "../utils/gen-cols-from-data";
 import { Spinner } from "./spinner";
 
+// Performance: Use Map for O(1) lookups instead of nested objects
+type ChangedCells = Map<string, Record<string, unknown>>;
+
 export const TableContent = ({ activeTable }: { activeTable: string }) => {
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 	const [rowSelection, setRowSelection] = useState({});
 	const [globalFilter, setGlobalFilter] = useState("");
+
+	// Performance: Track only changed cells, not entire rows
+	const [changedCells, setChangedCells] = useState<ChangedCells>(new Map());
 
 	const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
 		queryKey: ["table", activeTable],
@@ -32,11 +38,60 @@ export const TableContent = ({ activeTable }: { activeTable: string }) => {
 		refetchOnWindowFocus: false,
 	});
 
+	// Clear changes when table changes
+	useEffect(() => {
+		setChangedCells(new Map());
+	}, []);
+
 	const tableData = useMemo(() => {
 		if (!data?.pages) return [];
 		return data.pages.flatMap((page) => page.data);
 	}, [data]);
 
+	// Performance: Memoize the cell change handler to prevent re-renders
+	const handleCellChange = useCallback(
+		(rowId: string, columnKey: string, newValue: unknown) => {
+			setChangedCells((prev) => {
+				const newMap = new Map(prev);
+				const rowChanges = newMap.get(rowId) || {};
+
+				// If value is same as original, remove from changes
+				const originalRow = tableData.find((_row, idx) => String(idx) === rowId);
+				if (originalRow && originalRow[columnKey] === newValue) {
+					delete rowChanges[columnKey];
+					if (Object.keys(rowChanges).length === 0) {
+						newMap.delete(rowId);
+					} else {
+						newMap.set(rowId, rowChanges);
+					}
+				} else {
+					newMap.set(rowId, { ...rowChanges, [columnKey]: newValue });
+				}
+
+				return newMap;
+			});
+		},
+		[tableData],
+	);
+
+	// Performance: Helper to get cell value (changed or original)
+	const getCellValue = useCallback(
+		(rowId: string, columnKey: string, originalValue: unknown) => {
+			const rowChanges = changedCells.get(rowId);
+			return rowChanges?.[columnKey] ?? originalValue;
+		},
+		[changedCells],
+	);
+
+	// Check if a specific cell has been changed
+	const isCellChanged = useCallback(
+		(rowId: string, columnKey: string) => {
+			return changedCells.get(rowId)?.[columnKey] !== undefined;
+		},
+		[changedCells],
+	);
+
+	// Performance: Only regenerate columns when tableData changes
 	const columns = useMemo<ColumnDef<TableRow>[]>(() => {
 		if (!tableData || tableData.length === 0) {
 			return [];
@@ -68,8 +123,9 @@ export const TableContent = ({ activeTable }: { activeTable: string }) => {
 			size: 50,
 			enableResizing: false,
 		};
-		return [selectionColumn, ...generateColumnsFromData(tableData)];
-	}, [tableData]);
+
+		return [selectionColumn, ...generateColumnsFromData(tableData, handleCellChange, getCellValue, isCellChanged)];
+	}, [tableData, handleCellChange, getCellValue, isCellChanged]);
 
 	const table = useReactTable({
 		data: tableData || [],
@@ -77,6 +133,11 @@ export const TableContent = ({ activeTable }: { activeTable: string }) => {
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
+		defaultColumn: {
+			size: 150,
+			minSize: 50,
+			maxSize: 500,
+		},
 		state: {
 			rowSelection,
 			globalFilter,
@@ -97,7 +158,6 @@ export const TableContent = ({ activeTable }: { activeTable: string }) => {
 
 		const handleScroll = () => {
 			const { scrollTop, scrollHeight, clientHeight } = container;
-			// trigger fetch when user scroll to 80% of the container
 			if (scrollHeight - scrollTop <= clientHeight * 1.2 && hasNextPage && !isFetchingNextPage) {
 				fetchNextPage();
 			}
@@ -121,7 +181,31 @@ export const TableContent = ({ activeTable }: { activeTable: string }) => {
 		setRowSelection({});
 	};
 
+	const handleSaveRecords = () => {
+		// Merge changes back into rows
+		const updatedRows: Array<{ rowIndex: number; data: TableRow }> = [];
+
+		changedCells.forEach((changes, rowId) => {
+			const rowIndex = Number(rowId);
+			const originalRow = tableData[rowIndex];
+			if (originalRow) {
+				updatedRows.push({
+					rowIndex,
+					data: { ...originalRow, ...changes },
+				});
+			}
+		});
+
+		console.log("Save changes:", updatedRows);
+		// TODO: Implement actual save API call
+
+		// Clear changes after save
+		setChangedCells(new Map());
+	};
+
 	const selectedCount = Object.keys(rowSelection).length;
+	const hasChanges = changedCells.size > 0;
+	const changesCount = changedCells.size;
 
 	if (isLoading) {
 		return (
@@ -174,6 +258,18 @@ export const TableContent = ({ activeTable }: { activeTable: string }) => {
 							Delete {selectedCount} row{selectedCount !== 1 ? "s" : ""}
 						</button>
 					)}
+
+					{/* Save button - only show when there are changes */}
+					{hasChanges && (
+						<button
+							type="button"
+							onClick={handleSaveRecords}
+							className="h-9 px-4 rounded-md bg-green-600 hover:bg-green-700 border border-green-700 transition-colors text-sm font-medium text-white flex items-center gap-2"
+						>
+							<Save className="size-4" />
+							Save {changesCount} row{changesCount !== 1 ? "s" : ""}
+						</button>
+					)}
 				</div>
 
 				<button
@@ -211,7 +307,7 @@ export const TableContent = ({ activeTable }: { activeTable: string }) => {
 								{row.getVisibleCells().map((cell) => (
 									<td
 										key={cell.id}
-										className="border-x border-b border-zinc-800 px-3 py-2.5 text-sm text-zinc-100"
+										className="border-x border-b border-zinc-800 text-sm text-zinc-100"
 										style={{ width: cell.column.getSize() }}
 									>
 										{flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -237,58 +333,6 @@ export const TableContent = ({ activeTable }: { activeTable: string }) => {
 					)}
 				</table>
 			</div>
-
-			{/* <div className="border-t border-zinc-800 bg-black px-4 py-3 flex items-center justify-between">
-				<div className="text-sm text-zinc-400">
-					Showing {table.getRowModel().rows.length} of {tableData.length} rows
-				</div>
-
-				<div className="flex items-center gap-2">
-					<button
-						type="button"
-						onClick={() => table.setPageIndex(0)}
-						disabled={!table.getCanPreviousPage()}
-						className="p-1.5 rounded hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-zinc-400 hover:text-zinc-100"
-						title="First page"
-					>
-						<ChevronsLeft className="size-4" />
-					</button>
-					<button
-						type="button"
-						onClick={() => table.previousPage()}
-						disabled={!table.getCanPreviousPage()}
-						className="p-1.5 rounded hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-zinc-400 hover:text-zinc-100"
-						title="Previous page"
-					>
-						<ChevronLeft className="size-4" />
-					</button>
-
-					<div className="flex items-center gap-2 px-2">
-						<span className="text-sm text-zinc-400">
-							Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-						</span>
-					</div>
-
-					<button
-						type="button"
-						onClick={() => table.nextPage()}
-						disabled={!table.getCanNextPage()}
-						className="p-1.5 rounded hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-zinc-400 hover:text-zinc-100"
-						title="Next page"
-					>
-						<ChevronRight className="size-4" />
-					</button>
-					<button
-						type="button"
-						onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-						disabled={!table.getCanNextPage()}
-						className="p-1.5 rounded hover:bg-zinc-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-zinc-400 hover:text-zinc-100"
-						title="Last page"
-					>
-						<ChevronsRight className="size-4" />
-					</button>
-				</div>
-			</div> */}
 		</main>
 	);
 };

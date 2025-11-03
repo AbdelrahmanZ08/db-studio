@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Pin, PinOff, Plus } from "lucide-react";
+import { Pin, PinOff, Plus, Search } from "lucide-react";
 import { useMemo } from "react";
 import { useSearchParams } from "../../hooks/use-search-params";
 import { getTables } from "../../services/get-tables";
@@ -75,44 +75,48 @@ export const Sidebar = ({
 		>
 			<div className="flex flex-col h-full">
 				{/* Sidebar Header */}
-				<div className="h-8 space-y-2 border-b border-zinc-800">
-					<div className="flex items-center justify-between">
+				<div className="flex items-center justify-between h-8 space-y-2 border-b border-zinc-800">
+					<button
+						type="button"
+						onClick={() => setIsPinned(!isPinned)}
+						className="size-8 flex items-center justify-center rounded-lg transition-colors"
+						title={isPinned ? "Unpin sidebar" : "Pin sidebar"}
+					>
+						{isPinned ? <Pin className="size-4" /> : <PinOff className="size-4" />}
+					</button>
+
+					{!isPinned && (
 						<button
 							type="button"
-							onClick={() => setIsPinned(!isPinned)}
+							onClick={() => setIsOpen(false)}
 							className="size-8 flex items-center justify-center rounded-lg transition-colors"
-							title={isPinned ? "Unpin sidebar" : "Pin sidebar"}
+							title="Close sidebar"
 						>
-							{isPinned ? <Pin className="size-4" /> : <PinOff className="size-4" />}
+							<Plus className="size-4 rotate-45" />
 						</button>
+					)}
+				</div>
 
-						{!isPinned && (
-							<button
-								type="button"
-								onClick={() => setIsOpen(false)}
-								className="size-8 flex items-center justify-center rounded-lg transition-colors"
-								title="Close sidebar"
-							>
-								<Plus className="size-4 rotate-45" />
-							</button>
-						)}
+				{/* Search input */}
+				<div className="p-3 space-y-3">
+					<button
+						className="w-full h-8 rounded-md bg-zinc-800 hover:bg-zinc-700 transition-colors text-sm text-zinc-300"
+						type="button"
+					>
+						New Request
+					</button>
+
+					<div className="relative">
+						<Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
+						<input
+							type="text"
+							placeholder="Find"
+							className="w-full h-8 pl-8 pr-8 rounded-md bg-zinc-900 border border-zinc-700 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-blue-500 transition-colors"
+						/>
+						<kbd className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-xs bg-zinc-800 border border-zinc-700 rounded">
+							/
+						</kbd>
 					</div>
-
-					{/* <button className="w-full h-8 rounded-md bg-zinc-800 hover:bg-zinc-700 transition-colors text-sm text-zinc-300">
-            New Request
-          </button>
-
-          <div className="relative">
-            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-            <input
-              type="text"
-              placeholder="Find"
-              className="w-full h-8 pl-8 pr-8 rounded-md bg-zinc-900 border border-zinc-700 text-sm text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-red-500"
-            />
-            <kbd className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 text-xs bg-zinc-800 border border-zinc-700 rounded">
-              /
-            </kbd>
-          </div> */}
 				</div>
 
 				<div className="flex-1 overflow-y-auto">
