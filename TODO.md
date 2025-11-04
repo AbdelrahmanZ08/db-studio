@@ -1,13 +1,7 @@
-- [ ] connect to db
-- [ ] zustand for getting all table count
-- [ ]
-- [ ]
-- [ ]
-
----
-
 - [x] add checkboxes
 - [x] resize
+- [x] zustand
+- [x] db
 - [ ] actions row
 - [ ] input fields
 - [ ] sort by col
