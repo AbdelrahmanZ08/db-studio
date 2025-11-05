@@ -6,7 +6,11 @@ import { HOVER_DELAY, HOVER_ZONE } from "@/utils/constants";
 import { SidebarContent } from "./sidebar-content";
 
 export const Sidebar = () => {
-	const { sidebar, setSidebarWidth, setSidebarOpen } = usePersonalPreferencesStore();
+	const {
+		sidebar: { width, isOpen, isPinned },
+		setSidebarWidth,
+		setSidebarOpen,
+	} = usePersonalPreferencesStore();
 
 	const sidebarRef = useRef<HTMLElement>(null);
 	const isResizingRef = useRef(false);
@@ -43,7 +47,7 @@ export const Sidebar = () => {
 			e.preventDefault();
 			isResizingRef.current = true;
 			startXRef.current = e.clientX;
-			startWidthRef.current = sidebar.width;
+			startWidthRef.current = width;
 
 			document.body.style.cursor = "col-resize";
 			document.body.style.userSelect = "none";
@@ -54,27 +58,27 @@ export const Sidebar = () => {
 			overlay.style.cssText = "position:fixed;inset:0;z-index:9999;cursor:col-resize;";
 			document.body.appendChild(overlay);
 		},
-		[sidebar.width],
+		[width],
 	);
 
 	// Handle hover behavior when unpinned
 	const handleMouseEnter = useCallback(() => {
-		if (!sidebar.isPinned) {
+		if (!isPinned) {
 			setSidebarOpen(true);
 		}
-	}, [sidebar.isPinned, setSidebarOpen]);
+	}, [isPinned, setSidebarOpen]);
 
 	const handleMouseLeave = useCallback(() => {
-		if (!sidebar.isPinned) {
+		if (!isPinned) {
 			setSidebarOpen(false);
 		}
-	}, [sidebar.isPinned, setSidebarOpen]);
+	}, [isPinned, setSidebarOpen]);
 
 	// Edge hover detection - opens sidebar when mouse is near left edge
 	const handleEdgeHover = useCallback(
 		(e: MouseEvent) => {
 			// Don't trigger if sidebar is already pinned or open, or if resizing
-			if (sidebar.isPinned || sidebar.isOpen || isResizingRef.current) return;
+			if (isPinned || isOpen || isResizingRef.current) return;
 
 			if (e.clientX <= HOVER_ZONE) {
 				// Clear any existing timeout
@@ -93,7 +97,7 @@ export const Sidebar = () => {
 				}
 			}
 		},
-		[sidebar.isPinned, sidebar.isOpen, setSidebarOpen],
+		[isPinned, isOpen, setSidebarOpen],
 	);
 
 	useEffect(() => {
@@ -119,12 +123,12 @@ export const Sidebar = () => {
 			onMouseEnter={handleMouseEnter}
 			onMouseLeave={handleMouseLeave}
 			style={{
-				width: `${sidebar.width}px`,
+				width: `${width}px`,
 			}}
 			className={cn(
 				"fixed left-0 top-0 bg-black border-r border-zinc-800 z-50 h-dvh",
 				"transition-transform duration-300 ease-out",
-				sidebar.isOpen || sidebar.isPinned ? "translate-x-0" : "-translate-x-full",
+				isOpen || isPinned ? "translate-x-0" : "-translate-x-full",
 			)}
 		>
 			<SidebarContent />

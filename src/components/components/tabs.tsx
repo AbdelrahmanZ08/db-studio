@@ -1,9 +1,9 @@
-import { useActiveTab } from "@/store/active-tab.store";
+import { useActiveTabStore } from "@/store/active-tab.store";
 import { cn } from "@/utils/cn";
 import { SidebarToggleButton } from "../sidebar/sidebar-toggle-button";
 
 export const Tabs = () => {
-	const { activeTab, setActiveTab } = useActiveTab();
+	const { activeTab, setActiveTab } = useActiveTabStore();
 
 	const tabs = [
 		{ id: "table", label: "Table" },

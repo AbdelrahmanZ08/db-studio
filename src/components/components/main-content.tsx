@@ -1,4 +1,4 @@
-import { useActiveTab } from "@/store/active-tab.store";
+import { useActiveTabStore } from "@/store/active-tab.store";
 import { IndexesTab } from "../indexes/indexes-tab";
 import { RunnerTab } from "../runner/runner-tab";
 import { SchemaTab } from "../schema/schema-tab";
@@ -6,7 +6,7 @@ import { TableTab } from "../table/table-tab";
 import { VisualizerTab } from "../visualizer/visualizer-tab";
 
 export const MainContent = () => {
-	const { activeTab } = useActiveTab();
+	const { activeTab } = useActiveTabStore();
 
 	switch (activeTab) {
 		case "table":

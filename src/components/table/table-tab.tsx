@@ -1,6 +1,6 @@
 import { useActiveTableStore } from "@/store/active-table.store";
 import { TableHeader } from "./header/table-header";
-import { TableGrid } from "./table-grid";
+import { Table } from "./table-grid/table";
 
 export const TableTab = () => {
 	const { activeTable } = useActiveTableStore();
@@ -16,7 +16,9 @@ export const TableTab = () => {
 	return (
 		<>
 			<TableHeader />
-			<TableGrid activeTable={activeTable} />
+			<main className="flex-1 flex items-center justify-center text-zinc-100">
+				<Table activeTable={activeTable} />
+			</main>
 		</>
 	);
 };
