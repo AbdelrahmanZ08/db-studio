@@ -10,7 +10,7 @@ const App = () => {
 	} = usePersonalPreferencesStore();
 
 	return (
-		<div className="bg-zinc-950 h-dvh w-dvw flex">
+		<div className="bg-zinc-950 h-dvh w-dvw flex dark">
 			<Sidebar />
 
 			<div className={cn("flex-1 flex flex-col transition-all duration-300 ease-out", isPinned ? "ml-[260px]" : "")}>

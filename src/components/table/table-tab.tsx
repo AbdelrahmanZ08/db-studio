@@ -1,6 +1,6 @@
 import { useActiveTableStore } from "@/store/active-table.store";
-import { TableContent } from "./table-content";
-import { TableHeader } from "./table-header";
+import { TableHeader } from "./header/table-header";
+import { TableGrid } from "./table-grid";
 
 export const TableTab = () => {
 	const { activeTable } = useActiveTableStore();
@@ -16,7 +16,7 @@ export const TableTab = () => {
 	return (
 		<>
 			<TableHeader />
-			<TableContent key={activeTable} activeTable={activeTable} />
+			<TableGrid activeTable={activeTable} />
 		</>
 	);
 };

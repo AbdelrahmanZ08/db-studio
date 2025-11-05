@@ -1,14 +1,14 @@
-import { create } from "zustand";
+import { createStoreActions, useStore } from "./store";
 
-type ActiveTabStore = {
-	activeTab: string | null;
-	setActiveTab: (tabName: string | null) => void;
-};
-
-export const useActiveTabStore = create<ActiveTabStore>((set) => ({
-	activeTab: "table",
-	setActiveTab: (tabName) => {
-		set({ activeTab: tabName });
-		console.log("activeTab", tabName);
+export const activeTabStore = createStoreActions({ activeTab: "table" }, (store) => ({
+	setActiveTab: (tabName: string) => {
+		store.setState("activeTab", tabName);
 	},
 }));
+
+export const useActiveTab = () => {
+	const activeTab = useStore(activeTabStore, (state) => state.activeTab);
+	const setActiveTab = activeTabStore.storeActions.setActiveTab;
+
+	return { activeTab, setActiveTab };
+};
