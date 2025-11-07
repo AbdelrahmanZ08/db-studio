@@ -1,11 +1,10 @@
-"use client";
-
 import { faker } from "@faker-js/faker";
 import type { ColumnDef } from "@tanstack/react-table";
-import * as React from "react";
+import { useCallback, useMemo, useState } from "react";
 import { DataGrid } from "@/components/data-grid/data-grid";
 // import { DataGridKeyboardShortcuts } from "@/components/data-grid/data-grid-keyboard-shortcuts";
 import { useDataGrid } from "@/hooks/use-data-grid";
+import { useActiveTableStore } from "@/stores/active-table.store";
 
 interface SkateTrick {
 	id: string;
@@ -172,9 +171,10 @@ function generateTrickData(): SkateTrick[] {
 const initialData: SkateTrick[] = generateTrickData();
 
 export function TableGrid() {
-	const [data, setData] = React.useState<SkateTrick[]>(initialData);
+	const { activeTable } = useActiveTableStore();
+	const [data, setData] = useState<SkateTrick[]>(initialData);
 
-	const columns = React.useMemo<ColumnDef<SkateTrick>[]>(
+	const columns = useMemo<ColumnDef<SkateTrick>[]>(
 		() => [
 			{
 				id: "trickName",
@@ -240,7 +240,7 @@ export function TableGrid() {
 				header: "Landed",
 				meta: {
 					cell: {
-						variant: "checkbox",
+						variant: "boolean",
 					},
 				},
 				minSize: 100,
@@ -298,7 +298,7 @@ export function TableGrid() {
 		[],
 	);
 
-	const onRowAdd = React.useCallback(() => {
+	const onRowAdd = useCallback(() => {
 		setData((prev) => [...prev, { id: faker.string.nanoid() }]);
 
 		return {
@@ -318,6 +318,7 @@ export function TableGrid() {
 	return (
 		<main className="flex-1 overflow-auto">
 			{/* <DataGridKeyboardShortcuts enableSearch={!!dataGridProps.searchState} /> */}
+			<h1>{activeTable}</h1>
 			<DataGrid {...dataGridProps} table={table} />
 		</main>
 	);

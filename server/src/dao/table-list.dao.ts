@@ -1,4 +1,4 @@
-import { db } from "./db.js";
+import { db } from "../db.js";
 
 export interface TableInfo {
   tableName: string;
@@ -25,4 +25,4 @@ export const getTablesList = async (): Promise<TableInfo[]> => {
   } finally {
     client.release();
   }
-}
+} 

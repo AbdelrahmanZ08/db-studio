@@ -15,6 +15,9 @@ export type Cell =
 			variant: "long-text";
 	  }
 	| {
+			variant: "boolean";
+	  }
+	| {
 			variant: "number";
 			min?: number;
 			max?: number;

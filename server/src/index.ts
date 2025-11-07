@@ -2,26 +2,40 @@ import 'dotenv/config'
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
-import { getTablesList } from './utils.js'
+import { logger } from 'hono/logger'
+
+import { getTablesList } from './dao/table-list.dao.js'
+import { getTableColumns } from './dao/table-columns.dao.js'
 
 const app = new Hono()
 
 // Add CORS middleware
 app.use('/*', cors())
+app.use('/*', logger())
 
+/**
+ * Tables
+ * GET /tables - Get all tables
+ */
 app.get('/tables', async (c) => {
-  try {
-    console.log('Fetching tables list...')
-    const tablesList = await getTablesList()
-    console.log('Tables fetched successfully:', tablesList.length, 'tables')
-    return c.json(tablesList)
-  } catch (error) {
-    console.error('Error fetching tables list:', error)
-    const errorMessage = error instanceof Error ? error.message : 'Internal server error'
-    return c.json({ error: 'Failed to fetch tables list', message: errorMessage }, 500)
-  }
+  const tablesList = await getTablesList()
+  return c.json(tablesList)
 });
 
+/**
+ * Columns
+ * GET /tables/:tableName/columns - Get all columns for a table
+ */
+app.get('/tables/:tableName/columns', async (c) => {
+  const tableName = c.req.param('tableName')
+  const columns = await getTableColumns(tableName)
+  return c.json(columns)
+});
+
+/**
+ * Root
+ * GET / - Get the root
+ */
 app.get('/', (c) => {
   return c.json({ message: 'Hello World' })
 })

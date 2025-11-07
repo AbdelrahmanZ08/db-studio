@@ -3,6 +3,7 @@
 import type { Cell, Table } from "@tanstack/react-table";
 
 import {
+	BooleanCell,
 	CheckboxCell,
 	DateCell,
 	LongTextCell,
@@ -49,6 +50,18 @@ export function DataGridCell<TData>({ cell, table }: DataGridCellProps<TData>) {
 		case "long-text":
 			return (
 				<LongTextCell
+					cell={cell}
+					table={table}
+					rowIndex={rowIndex}
+					columnId={columnId}
+					isEditing={isEditing}
+					isFocused={isFocused}
+					isSelected={isSelected}
+				/>
+			);
+		case "boolean":
+			return (
+				<BooleanCell
 					cell={cell}
 					table={table}
 					rowIndex={rowIndex}
