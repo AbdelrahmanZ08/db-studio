@@ -1,4 +1,4 @@
-export type DataType = "short-text" | "long-text" | "BOOLEAN" | "number" | "ARRAY";
+import type { DataType } from "@/types/data-grid";
 
 export interface ColumnInfo {
 	columnName: string;
@@ -7,6 +7,7 @@ export interface ColumnInfo {
 	columnDefault: string | null;
 	isPrimaryKey: boolean;
 }
+
 export const getTableCols = async (tableName: string): Promise<ColumnInfo[]> => {
 	try {
 		const response = await fetch(`/api/tables/${tableName}/columns`);

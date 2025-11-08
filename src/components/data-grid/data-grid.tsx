@@ -27,7 +27,6 @@ export function DataGrid<TData>({
 	const columns = table.getAllColumns();
 
 	const meta = table.options.meta;
-	const rowHeight = meta?.rowHeight ?? "short";
 	const focusedCell = meta?.focusedCell ?? null;
 
 	const onGridContextMenu = useCallback((event: MouseEvent<HTMLDivElement>) => {
@@ -65,7 +64,7 @@ export function DataGrid<TData>({
 							aria-rowindex={rowIndex + 1}
 							data-slot="grid-header-row"
 							tabIndex={-1}
-							className="flex w-full"
+							className="flex w-full h-9"
 						>
 							{headerGroup.headers.map((header, colIndex) => {
 								const sorting = table.getState().sorting;
@@ -88,7 +87,7 @@ export function DataGrid<TData>({
 										}
 										data-slot="grid-header-cell"
 										tabIndex={-1}
-										className={cn("relative", {
+										className={cn("relative max-h-9", {
 											"border-r border-zinc-800": header.column.id !== "select",
 										})}
 										style={{
@@ -127,7 +126,6 @@ export function DataGrid<TData>({
 								rowMapRef={rowMapRef}
 								virtualRowIndex={virtualRowIndex}
 								rowVirtualizer={rowVirtualizer}
-								rowHeight={rowHeight}
 								focusedCell={focusedCell}
 							/>
 						);

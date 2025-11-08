@@ -20,18 +20,16 @@ import {
 	useSyncExternalStore,
 } from "react";
 import { DataGridCell } from "@/components/data-grid/data-grid-cell";
-import { getCellKey, getRowHeightValue, parseCellKey } from "@/lib/data-grid";
+import { getCellKey, parseCellKey } from "@/lib/data-grid";
 import type {
 	CellPosition,
 	ContextMenuState,
 	NavigationDirection,
-	RowHeightValue,
 	SearchState,
 	SelectionState,
 	UpdateCell,
 } from "@/types/data-grid";
 
-const DEFAULT_ROW_HEIGHT = "short";
 const OVERSCAN = 3;
 const VIEWPORT_OFFSET = 1;
 const MIN_COLUMN_SIZE = 60;
@@ -61,7 +59,6 @@ function useAsRef<T>(data: T) {
 
 interface DataGridState {
 	sorting: SortingState;
-	rowHeight: RowHeightValue;
 	rowSelection: RowSelectionState;
 	selectionState: SelectionState;
 	focusedCell: CellPosition | null;
@@ -98,7 +95,6 @@ interface UseDataGridProps<TData> extends Omit<TableOptions<TData>, "pageCount" 
 		// biome-ignore lint/suspicious/noConfusingVoidType: void is needed here to allow functions without explicit return
 		| void;
 	onRowsDelete?: (rows: TData[], rowIndices: number[]) => void | Promise<void>;
-	rowHeight?: RowHeightValue;
 	overscan?: number;
 	autoFocus?: boolean | Partial<CellPosition>;
 	enableColumnSelection?: boolean;
@@ -111,7 +107,6 @@ export function useDataGrid<TData>({
 	onDataChange,
 	onRowAdd: onRowAddProp,
 	onRowsDelete: onRowsDeleteProp,
-	rowHeight: rowHeightProp = DEFAULT_ROW_HEIGHT,
 	overscan = OVERSCAN,
 	initialState,
 	autoFocus = false,
@@ -131,7 +126,6 @@ export function useDataGrid<TData>({
 	const stateRef = useLazyRef<DataGridState>(() => {
 		return {
 			sorting: initialState?.sorting ?? [],
-			rowHeight: rowHeightProp,
 			rowSelection: initialState?.rowSelection ?? {},
 			selectionState: {
 				selectedCells: new Set(),
@@ -218,10 +212,7 @@ export function useDataGrid<TData>({
 	const sorting = useStore(store, (state) => state.sorting);
 	const rowSelection = useStore(store, (state) => state.rowSelection);
 	const contextMenu = useStore(store, (state) => state.contextMenu);
-	const rowHeight = useStore(store, (state) => state.rowHeight);
 	const isScrolling = useStore(store, (state) => state.isScrolling);
-
-	const rowHeightValue = getRowHeightValue(rowHeight);
 
 	const columnIds = useMemo(() => {
 		return columns
@@ -584,11 +575,11 @@ export function useDataGrid<TData>({
 
 					// Scroll by exactly one row height to reveal it smoothly
 					if (direction === "down") {
-						container.scrollTop += rowHeightValue;
+						container.scrollTop += 36;
 					} else {
 						// For arrow up, ensure we don't go below 0
 						const currentScrollTop = container.scrollTop;
-						const targetScrollTop = Math.max(0, currentScrollTop - rowHeightValue);
+						const targetScrollTop = Math.max(0, currentScrollTop - 36);
 						container.scrollTop = targetScrollTop;
 					}
 					return;
@@ -613,7 +604,7 @@ export function useDataGrid<TData>({
 				focusCell(newRowIndex, newColumnId);
 			}
 		},
-		[store, navigableColumnIds, focusCell, data.length, rowHeightValue],
+		[store, navigableColumnIds, focusCell, data.length],
 	);
 
 	const onCellEditingStart = useCallback(
@@ -1240,15 +1231,6 @@ export function useDataGrid<TData>({
 		[store, onRowSelectionChange],
 	);
 
-	const onRowHeightChange = useCallback(
-		(updater: Updater<RowHeightValue>) => {
-			const currentState = store.getState();
-			const newRowHeight = typeof updater === "function" ? updater(currentState.rowHeight) : updater;
-			store.setState("rowHeight", newRowHeight);
-		},
-		[store],
-	);
-
 	const onColumnClick = useCallback(
 		(columnId: string) => {
 			if (!enableColumnSelection) {
@@ -1294,12 +1276,10 @@ export function useDataGrid<TData>({
 				editingCell,
 				selectionState,
 				searchOpen,
-				rowHeight,
 				isScrolling,
 				getIsCellSelected,
 				getIsSearchMatch,
 				getIsActiveSearchMatch,
-				onRowHeightChange,
 				onRowSelect,
 				onRowsDelete: onRowsDeleteProp ? onRowsDelete : undefined,
 				onDataUpdate,
@@ -1348,8 +1328,6 @@ export function useDataGrid<TData>({
 			onCellEditingStop,
 			contextMenu,
 			onContextMenuOpenChange,
-			rowHeight,
-			onRowHeightChange,
 			onRowSelect,
 		],
 	);
@@ -1369,12 +1347,12 @@ export function useDataGrid<TData>({
 			colSizes[`--col-${header.column.id}-size`] = header.column.getSize();
 		}
 		return colSizes;
-	}, [table.getState().columnSizingInfo, table.getState().columnSizing]);
+	}, [table.getState().columnSizingInfo, table.getState().columnSizing, columns]);
 
 	const rowVirtualizer = useVirtualizer({
 		count: table.getRowModel().rows.length,
 		getScrollElement: () => dataGridRef.current,
-		estimateSize: () => rowHeightValue,
+		estimateSize: () => 36,
 		overscan,
 		measureElement:
 			typeof window !== "undefined" && navigator.userAgent.indexOf("Firefox") === -1
@@ -1653,7 +1631,6 @@ export function useDataGrid<TData>({
 		table.getState().grouping,
 		table.getState().rowSelection,
 		table.getState().sorting,
-		rowHeight,
 	]);
 
 	return {

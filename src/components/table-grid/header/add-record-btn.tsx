@@ -1,6 +1,6 @@
 import { type KeyboardEvent, useCallback } from "react";
 
-export const AddRecordBtn = ({ onRowAdd }: { onRowAdd: () => void }) => {
+export const AddRecordBtn = ({ onRowAdd }: { onRowAdd?: () => void }) => {
 	const onAddRowKeyDown = useCallback(
 		(event: KeyboardEvent<HTMLButtonElement>) => {
 			if (!onRowAdd) return;
@@ -14,7 +14,7 @@ export const AddRecordBtn = ({ onRowAdd }: { onRowAdd: () => void }) => {
 	);
 
 	const handleClick = useCallback(() => {
-		onRowAdd();
+		onRowAdd?.();
 	}, [onRowAdd]);
 
 	return (

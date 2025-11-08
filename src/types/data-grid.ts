@@ -1,11 +1,11 @@
 import type { RowData } from "@tanstack/react-table";
 
-export type RowHeightValue = "short" | "medium" | "tall" | "extra-tall";
-
 export interface CellSelectOption {
 	label: string;
 	value: string;
 }
+
+export type DataType = "short-text" | "long-text" | "boolean" | "number" | "array";
 
 export type Cell =
 	| {
@@ -28,10 +28,6 @@ export type Cell =
 			options: CellSelectOption[];
 	  }
 	| {
-			variant: "multi-select";
-			options: CellSelectOption[];
-	  }
-	| {
 			variant: "checkbox";
 	  }
 	| {
@@ -45,14 +41,12 @@ export interface UpdateCell {
 }
 
 declare module "@tanstack/react-table" {
-	// biome-ignore lint/correctness/noUnusedVariables: TData and TValue are used in the ColumnMeta interface
-	interface ColumnMeta<TData extends RowData, TValue> {
+	interface ColumnMeta {
 		label?: string;
 		cell?: Cell;
 	}
 
-	// biome-ignore lint/correctness/noUnusedVariables: TData is used in the TableMeta interface
-	interface TableMeta<TData extends RowData> {
+	interface TableMeta<_TData extends RowData> {
 		dataGridRef?: React.RefObject<HTMLElement | null>;
 		focusedCell?: CellPosition | null;
 		editingCell?: CellPosition | null;
@@ -75,8 +69,6 @@ declare module "@tanstack/react-table" {
 		onCellEditingStop?: (opts?: { direction?: NavigationDirection; moveToNextRow?: boolean }) => void;
 		contextMenu?: ContextMenuState;
 		onContextMenuOpenChange?: (open: boolean) => void;
-		rowHeight?: RowHeightValue;
-		onRowHeightChange?: (value: RowHeightValue) => void;
 		onRowSelect?: (rowIndex: number, checked: boolean, shiftKey: boolean) => void;
 	}
 }

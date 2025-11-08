@@ -17,7 +17,7 @@ export const SidebarListItem = ({ tableName, rowCount }: { tableName: string; ro
 			>
 				{activeTable === tableName && <span className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500" />}
 				<span className="flex-1">{tableName}</span>
-				<span className="text-xs text-zinc-400">{rowCount}</span>
+				<span className="text-xs font-medium text-zinc-200 bg-zinc-700/60 px-1.5 py-0.5 rounded">{rowCount}</span>
 			</button>
 		</li>
 	);

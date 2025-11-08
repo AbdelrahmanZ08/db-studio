@@ -9,7 +9,7 @@ export const TableTab = () => {
 
 	return (
 		<div className="flex flex-col flex-1 h-full overflow-hidden">
-			<TableView />
+			<TableView key={activeTable} />
 		</div>
 	);
 };

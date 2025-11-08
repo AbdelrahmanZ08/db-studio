@@ -4,8 +4,7 @@ import { flexRender, type Row } from "@tanstack/react-table";
 import type { Virtualizer } from "@tanstack/react-virtual";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
-import { getRowHeightValue } from "@/lib/data-grid";
-import type { CellPosition, RowHeightValue } from "@/types/data-grid";
+import type { CellPosition } from "@/types/data-grid";
 import { cn } from "@/utils/cn";
 
 interface DataGridRowProps<TData> extends React.ComponentProps<"div"> {
@@ -13,7 +12,6 @@ interface DataGridRowProps<TData> extends React.ComponentProps<"div"> {
 	rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
 	virtualRowIndex: number;
 	rowMapRef: React.RefObject<Map<number, HTMLDivElement>>;
-	rowHeight: RowHeightValue;
 	focusedCell: CellPosition | null;
 }
 
@@ -52,7 +50,6 @@ function DataGridRowImpl<TData>({
 	virtualRowIndex,
 	rowVirtualizer,
 	rowMapRef,
-	rowHeight,
 	focusedCell,
 	ref,
 	className,
@@ -77,10 +74,7 @@ function DataGridRowImpl<TData>({
 			data-slot="grid-row"
 			ref={rowRef}
 			tabIndex={-1}
-			className={cn("absolute flex w-full border-b border-zinc-800", className)}
-			style={{
-				height: `${getRowHeightValue(rowHeight)}px`,
-			}}
+			className={cn("absolute h-9 flex w-full border-b border-zinc-800", className)}
 			{...props}
 		>
 			{row.getVisibleCells().map((cell, colIndex) => {

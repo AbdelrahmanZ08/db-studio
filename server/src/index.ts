@@ -1,4 +1,5 @@
 import 'dotenv/config'
+
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
@@ -6,6 +7,7 @@ import { logger } from 'hono/logger'
 
 import { getTablesList } from './dao/table-list.dao.js'
 import { getTableColumns } from './dao/table-columns.dao.js'
+import { getTableData } from './dao/tables-data.dao.js'
 
 const app = new Hono()
 
@@ -33,11 +35,28 @@ app.get('/tables/:tableName/columns', async (c) => {
 });
 
 /**
+ * Data
+ * GET /tables/:tableName/data - Get paginated data for a table
+ * Query params: page (default: 1)
+ */
+app.get('/tables/:tableName/data', async (c) => {
+  const tableName = c.req.param('tableName')
+  const page = Number(c.req.query('page') || '1')
+  const data = await getTableData(tableName, page)
+  return c.json(data)
+});
+
+/**
  * Root
  * GET / - Get the root
  */
 app.get('/', (c) => {
-  return c.json({ message: 'Hello World' })
+  return c.json({
+    message: 'Hello World',
+    tables: "/tables",
+    columns: "/tables/:tableName/columns",
+    data: "/tables/:tableName/data",
+  })
 })
 
 // Check if DATABASE_URL is set

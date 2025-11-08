@@ -6,7 +6,6 @@ import {
 	BooleanCell,
 	CheckboxCell,
 	LongTextCell,
-	MultiSelectCell,
 	NumberCell,
 	SelectCell,
 	ShortTextCell,
@@ -31,7 +30,7 @@ export function DataGridCell<TData>({ cell, table }: DataGridCellProps<TData>) {
 	const isSelected = meta?.getIsCellSelected?.(rowIndex, columnId) ?? false;
 
 	const cellOpts = cell.column.columnDef.meta?.cell;
-	const variant = cellOpts?.variant ?? "text";
+	const variant = cellOpts?.variant ?? "short-text";
 
 	switch (variant) {
 		case "short-text":
@@ -85,18 +84,6 @@ export function DataGridCell<TData>({ cell, table }: DataGridCellProps<TData>) {
 		case "select":
 			return (
 				<SelectCell
-					cell={cell}
-					table={table}
-					rowIndex={rowIndex}
-					columnId={columnId}
-					isEditing={isEditing}
-					isFocused={isFocused}
-					isSelected={isSelected}
-				/>
-			);
-		case "multi-select":
-			return (
-				<MultiSelectCell
 					cell={cell}
 					table={table}
 					rowIndex={rowIndex}

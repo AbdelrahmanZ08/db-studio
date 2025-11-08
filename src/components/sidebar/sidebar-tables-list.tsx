@@ -16,7 +16,7 @@ export const TablesList = ({ searchTerm }: { searchTerm: string }) => {
 	}, [tablesList, searchTerm]);
 
 	return (
-		<div className="flex-1 overflow-y-auto">
+		<div className="flex-1 overflow-y-auto py-3">
 			{isLoadingTables ? (
 				<div className="px-4 py-8 text-center text-sm text-zinc-500">Loading tables...</div>
 			) : filteredTables.length > 0 ? (
