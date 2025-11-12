@@ -1,4 +1,3 @@
-import { faker } from "@faker-js/faker";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { DataGrid } from "@/components/data-grid/data-grid";
@@ -9,183 +8,12 @@ import { useTableData } from "@/hooks/use-table-data";
 import { useActiveTableStore } from "@/stores/active-table.store";
 import { TableHeader } from "./header/table-header";
 
-interface SkateTrick {
-	id: string;
-	trickName?: string;
-	skaterName?: string;
-	difficulty?: "beginner" | "intermediate" | "advanced" | "expert";
-	variant?: "flip" | "grind" | "grab" | "transition" | "manual" | "slide";
-	landed?: boolean;
-	attempts?: number;
-	bestScore?: number;
-	location?: string;
-	dateAttempted?: string;
-}
 
-const skateSpots = [
-	"Venice Beach Skate Park",
-	"Burnside Skate Park",
-	"Love Park (Philadelphia)",
-	"MACBA (Barcelona)",
-	"Southbank (London)",
-	"FDR Skate Park",
-	"Brooklyn Banks",
-	"El Toro High School",
-	"Hubba Hideout",
-	"Wallenberg High School",
-	"EMB (Embarcadero)",
-	"Pier 7 (San Francisco)",
-] as const;
-
-const skateTricks = {
-	flip: [
-		"Kickflip",
-		"Heelflip",
-		"Tre Flip",
-		"Hardflip",
-		"Inward Heelflip",
-		"Frontside Flip",
-		"Backside Flip",
-		"Varial Flip",
-		"Varial Heelflip",
-		"Double Flip",
-		"Laser Flip",
-		"Anti-Casper Flip",
-		"Casper Flip",
-		"Impossible",
-		"360 Flip",
-		"Big Spin",
-		"Bigspin Flip",
-	],
-	grind: [
-		"50-50 Grind",
-		"5-0 Grind",
-		"Nosegrind",
-		"Crooked Grind",
-		"Feeble Grind",
-		"Smith Grind",
-		"Lipslide",
-		"Boardslide",
-		"Tailslide",
-		"Noseslide",
-		"Bluntslide",
-		"Nollie Backside Lipslide",
-		"Switch Frontside Boardslide",
-	],
-	grab: [
-		"Indy Grab",
-		"Melon Grab",
-		"Stalefish",
-		"Tail Grab",
-		"Nose Grab",
-		"Method",
-		"Mute Grab",
-		"Crail Grab",
-		"Seatbelt Grab",
-		"Roast Beef",
-		"Chicken Wing",
-		"Tweaked Indy",
-		"Japan Air",
-	],
-	transition: [
-		"Frontside Air",
-		"Backside Air",
-		"McTwist",
-		"540",
-		"720",
-		"900",
-		"Frontside 180",
-		"Backside 180",
-		"Frontside 360",
-		"Backside 360",
-		"Alley-Oop",
-		"Fakie",
-		"Revert",
-		"Carve",
-		"Pump",
-		"Drop In",
-	],
-	manual: [
-		"Manual",
-		"Nose Manual",
-		"Casper",
-		"Rail Stand",
-		"Pogo",
-		"Handstand",
-		"One Foot Manual",
-		"Spacewalk",
-		"Truckstand",
-		"Primo",
-	],
-	slide: [
-		"Powerslide",
-		"Bert Slide",
-		"Coleman Slide",
-		"Pendulum Slide",
-		"Stand-up Slide",
-		"Toeside Slide",
-		"Heelside Slide",
-	],
-} as const;
-
-function generateTrickData(): SkateTrick[] {
-	return Array.from({ length: 300 }, () => {
-		const variant = faker.helpers.arrayElement(Object.keys(skateTricks) as Array<keyof typeof skateTricks>);
-		const trickName = faker.helpers.arrayElement(skateTricks[variant]);
-		const skaterName = faker.person.fullName();
-		const attempts = faker.number.int({ min: 1, max: 50 });
-		const landed = faker.datatype.boolean(0.6);
-
-		const getDifficulty = (trick: string): SkateTrick["difficulty"] => {
-			const expertTricks = ["Tre Flip", "900", "McTwist", "Laser Flip", "Impossible"];
-			const advancedTricks = ["Hardflip", "720", "540", "Crooked Grind", "Switch Frontside Boardslide"];
-			const intermediateTricks = ["Kickflip", "Heelflip", "Frontside 180", "50-50 Grind", "Boardslide"];
-
-			if (expertTricks.some((t) => trick.includes(t))) return "expert";
-			if (advancedTricks.some((t) => trick.includes(t))) return "advanced";
-			if (intermediateTricks.some((t) => trick.includes(t))) return "intermediate";
-			return "beginner";
-		};
-
-		const difficulty = getDifficulty(trickName);
-
-		return {
-			id: faker.string.nanoid(),
-			trickName,
-			skaterName,
-			difficulty,
-			variant,
-			landed,
-			attempts,
-			bestScore: landed ? faker.number.int({ min: 6, max: 10 }) : faker.number.int({ min: 1, max: 5 }),
-			location: faker.helpers.arrayElement(skateSpots),
-			dateAttempted:
-				faker.date
-					.between({
-						from: new Date(2023, 0, 1),
-						to: new Date(),
-					})
-					.toISOString()
-					.split("T")[0] ?? "",
-		};
-	});
-}
-
-const _initialData: SkateTrick[] = generateTrickData();
 
 export function TableView() {
 	const { activeTable } = useActiveTableStore();
 	const { tableCols, isLoadingTableCols } = useTableCols(activeTable);
 	const { tableData, isLoadingTableData } = useTableData(activeTable);
-
-	// const [data] = useState<Record<string, unknown>[]>(() => initialData.map((item) => ({
-	// 	id: item.id,
-	// 	trickName: item.trickName,
-	// 	skaterName: item.skaterName,
-	// 	difficulty: item.difficulty,
-	// 	variant: item.variant,
-	// 	landed: item.landed,
-	// }))) ?? []);
 
 	const columns = useMemo<ColumnDef<Record<string, unknown>>[]>(() => {
 		return (
@@ -195,7 +23,7 @@ export function TableView() {
 				header: col.columnName,
 				meta: {
 					cell: {
-						variant: "short-text",
+						variant: "long-text",
 					},
 				},
 				minSize: 150,
@@ -359,6 +187,7 @@ export function TableView() {
 		return (
 			<div className="flex flex-col flex-1 h-full overflow-hidden">
 				<TableHeader />
+
 				<div className="flex-1 flex flex-col items-center justify-center text-zinc-400 gap-3">
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
@@ -388,9 +217,9 @@ export function TableView() {
 
 	return (
 		<div className="flex flex-col flex-1 h-full overflow-hidden">
-			<TableHeader
-			// onRowAdd={onRowAdd}
-			/>
+			<TableHeader />
+			{/* // onRowAdd={onRowAdd} */}
+			{/* x */}
 			{/* <DataGridKeyboardShortcuts enableSearch={!!dataGridProps.searchState} /> */}
 			<DataGrid {...dataGridProps} table={table} className="h-full" />
 		</div>

@@ -9,30 +9,27 @@ export type DataType = "short-text" | "long-text" | "boolean" | "number" | "arra
 
 export type Cell =
 	| {
-			variant: "short-text";
-	  }
+		variant: "short-text";
+	}
 	| {
-			variant: "long-text";
-	  }
+		variant: "long-text";
+	}
 	| {
-			variant: "boolean";
-	  }
+		variant: "boolean";
+	}
 	| {
-			variant: "number";
-			min?: number;
-			max?: number;
-			step?: number;
-	  }
+		variant: "number";
+		min?: number;
+		max?: number;
+		step?: number;
+	}
 	| {
-			variant: "select";
-			options: CellSelectOption[];
-	  }
+		variant: "select";
+		options: CellSelectOption[];
+	}
 	| {
-			variant: "checkbox";
-	  }
-	| {
-			variant: "date";
-	  };
+		variant: "checkbox";
+	}
 
 export interface UpdateCell {
 	rowIndex: number;

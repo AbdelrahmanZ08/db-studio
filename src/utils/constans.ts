@@ -1,5 +1,5 @@
 //* sidebar constants
-export const HOVER_ZONE = 20; // pixels from left edge
+export const HOVER_ZONE = 40; // pixels from left edge
 export const HOVER_DELAY = 100; // ms delay before opening
 
 //* tabs constants

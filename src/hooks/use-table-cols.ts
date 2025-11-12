@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getTableCols } from "@/services/get-table-cols.service";
 
-export const useTableCols = (tableName: string) => {
+export const useTableCols = (tableName: string | null) => {
 	const { data, isLoading, error, refetch } = useQuery({
 		queryKey: ["table-cols", tableName],
 		queryFn: () => getTableCols(tableName),

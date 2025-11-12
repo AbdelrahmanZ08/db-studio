@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getTableData } from "@/services/get-table-data.service";
 
-export const useTableData = (tableName: string, page?: number) => {
+export const useTableData = (tableName: string | null, page?: number) => {
 	const { data, isLoading, error, refetch } = useQuery({
 		queryKey: ["table-data", tableName, page],
 		queryFn: () => getTableData(tableName, page),

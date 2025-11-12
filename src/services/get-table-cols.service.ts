@@ -8,7 +8,11 @@ export interface ColumnInfo {
 	isPrimaryKey: boolean;
 }
 
-export const getTableCols = async (tableName: string): Promise<ColumnInfo[]> => {
+export const getTableCols = async (tableName: string | null): Promise<ColumnInfo[]> => {
+	if (!tableName) {
+		return [];
+	}
+
 	try {
 		const response = await fetch(`/api/tables/${tableName}/columns`);
 		if (!response.ok) {

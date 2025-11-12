@@ -8,7 +8,11 @@ export interface TableDataResult {
 	};
 }
 
-export const getTableData = async (tableName: string, page: number = 1): Promise<TableDataResult> => {
+export const getTableData = async (tableName: string | null, page: number = 1): Promise<TableDataResult | null> => {
+	if (!tableName) {
+		return null;
+	}
+
 	const queryParams = new URLSearchParams();
 	queryParams.set("page", page.toString());
 
