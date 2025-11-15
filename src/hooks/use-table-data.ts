@@ -1,8 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getTableData } from "@/services/get-table-data.service";
+import { useSearchParamsUtils } from "@/utils/search-params";
 
-export const useTableData = (tableName: string | null, page?: number, pageSize?: number) => {
+export const useTableData = (tableName: string | null) => {
+	const { getParamAsNumber } = useSearchParamsUtils();
+	const page = getParamAsNumber("page") ?? 1;
+	const pageSize = getParamAsNumber("pageSize") ?? 50;
+
 	const { data, isLoading, error, refetch } = useQuery({
 		queryKey: ["table-data", tableName, page, pageSize],
 		queryFn: () => getTableData(tableName, page, pageSize),

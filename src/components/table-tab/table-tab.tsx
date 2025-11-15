@@ -1,9 +1,6 @@
 import { useActiveTableStore } from "@/stores/active-table.store";
 import { TableView } from "./table-view";
 
-// todo: add primary key icon (key)
-// todo: add data type next to the column name
-
 export const TableTab = () => {
 	const { activeTable } = useActiveTableStore();
 	if (!activeTable) {

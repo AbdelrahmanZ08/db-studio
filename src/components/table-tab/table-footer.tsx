@@ -1,20 +1,39 @@
-import type { Table } from "@tanstack/react-table";
 import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { useTableData } from "@/hooks/use-table-data";
+import { useActiveTableStore } from "@/stores/active-table.store";
+import { useSearchParamsUtils } from "@/utils/search-params";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Pagination, PaginationContent, PaginationItem } from "../ui/pagination";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
-export const TableFooter = ({ table }: { table: Table<Record<string, unknown>> }) => {
+export const TableFooter = () => {
+	const { setParams, setParam, getParamAsNumber } = useSearchParamsUtils();
+	const pageSize = getParamAsNumber("pageSize") ?? 50;
+	const currentPage = getParamAsNumber("page") ?? 1;
+
+	const { activeTable } = useActiveTableStore();
+	const { tableData } = useTableData(activeTable);
+	const totalRows = tableData?.meta.total ?? 0;
+	const totalPages = tableData?.meta.totalPages ?? 0;
+
+	const handlePageSizeChange = (value: string) => {
+		setParams({ pageSize: Number(value), page: 1 }, true);
+	};
+
+	const handlePageChange = (page: number) => {
+		setParam("page", page, true);
+	};
+
 	return (
 		<footer className="h-10 border-t border-zinc-800 w-full flex items-center justify-between bg-black px-2">
 			<div className="flex items-center gap-2">
 				{/* Results per page */}
 				<Label className="text-xs text-zinc-400 whitespace-nowrap">Rows per page</Label>
 				<Select
-					value={table.getState().pagination.pageSize.toString()}
+					value={pageSize.toString()}
 					onValueChange={(value) => {
-						table.setPageSize(Number(value));
+						handlePageSizeChange(value);
 					}}
 				>
 					<SelectTrigger
@@ -37,17 +56,9 @@ export const TableFooter = ({ table }: { table: Table<Record<string, unknown>> }
 			<div className="flex items-center justify-center text-xs text-zinc-400">
 				<p className="whitespace-nowrap" aria-live="polite">
 					<span className="text-zinc-200">
-						{table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1}-
-						{Math.min(
-							Math.max(
-								table.getState().pagination.pageIndex * table.getState().pagination.pageSize +
-									table.getState().pagination.pageSize,
-								0,
-							),
-							table.getRowCount(),
-						)}
+						{(currentPage - 1) * pageSize + 1}-{Math.min(currentPage * pageSize, totalRows)}
 					</span>{" "}
-					of <span className="text-zinc-200">{table.getRowCount().toString()}</span>
+					of <span className="text-zinc-200">{totalRows.toString()}</span>
 				</p>
 			</div>
 
@@ -60,8 +71,10 @@ export const TableFooter = ({ table }: { table: Table<Record<string, unknown>> }
 								size="icon-sm"
 								variant="ghost"
 								className="h-6 w-6 disabled:opacity-30"
-								onClick={() => table.firstPage()}
-								disabled={!table.getCanPreviousPage()}
+								onClick={() => {
+									handlePageChange(1);
+								}}
+								disabled={currentPage <= 1 || totalRows === 0}
 								aria-label="Go to first page"
 							>
 								<ChevronFirstIcon size={14} aria-hidden="true" />
@@ -72,8 +85,10 @@ export const TableFooter = ({ table }: { table: Table<Record<string, unknown>> }
 								size="icon-sm"
 								variant="ghost"
 								className="h-6 w-6 disabled:opacity-30"
-								onClick={() => table.previousPage()}
-								disabled={!table.getCanPreviousPage()}
+								onClick={() => {
+									handlePageChange(currentPage - 1);
+								}}
+								disabled={currentPage <= 1 || totalRows === 0}
 								aria-label="Go to previous page"
 							>
 								<ChevronLeftIcon size={14} aria-hidden="true" />
@@ -84,8 +99,10 @@ export const TableFooter = ({ table }: { table: Table<Record<string, unknown>> }
 								size="icon-sm"
 								variant="ghost"
 								className="h-6 w-6 disabled:opacity-30"
-								onClick={() => table.nextPage()}
-								disabled={!table.getCanNextPage()}
+								onClick={() => {
+									handlePageChange(currentPage + 1);
+								}}
+								disabled={currentPage >= totalPages || totalRows === 0}
 								aria-label="Go to next page"
 							>
 								<ChevronRightIcon size={14} aria-hidden="true" />
@@ -96,8 +113,10 @@ export const TableFooter = ({ table }: { table: Table<Record<string, unknown>> }
 								size="icon-sm"
 								variant="ghost"
 								className="h-6 w-6 disabled:opacity-30"
-								onClick={() => table.lastPage()}
-								disabled={!table.getCanNextPage()}
+								onClick={() => {
+									handlePageChange(totalPages);
+								}}
+								disabled={currentPage >= totalPages || totalRows === 0}
 								aria-label="Go to last page"
 							>
 								<ChevronLastIcon size={14} aria-hidden="true" />

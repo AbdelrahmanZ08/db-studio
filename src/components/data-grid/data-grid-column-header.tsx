@@ -31,7 +31,7 @@ export function DataGridColumnHeader<TData, TValue>({
 		: typeof column.columnDef.header === "string"
 			? column.columnDef.header
 			: column.id;
-	console.log("DataGridColumnHeader", column.columnDef.meta);
+
 	const isAnyColumnResizing = table.getState().columnSizingInfo.isResizingColumn;
 	const dataTypeLabel = column.columnDef.meta?.dataTypeLabel;
 	const isPrimaryKey = column.columnDef.meta?.isPrimaryKey;

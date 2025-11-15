@@ -1,10 +1,12 @@
 export interface TableDataResult {
 	data: Record<string, unknown>[];
-	pagination: {
+	meta: {
 		page: number;
-		pageSize: number;
-		totalRows: number;
+		limit: number;
+		total: number;
 		totalPages: number;
+		hasNextPage: boolean;
+		hasPreviousPage: boolean;
 	};
 }
 

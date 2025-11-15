@@ -1237,7 +1237,14 @@ function useDataGrid<TData>({
 			colSizes[`--col-${header.column.id}-size`] = header.column.getSize();
 		}
 		return colSizes;
-	}, [table.getState().columnSizingInfo, table.getState().columnSizing, table.getState().pagination, columns]);
+	}, [
+		table.getState().columnSizingInfo,
+		table.getState().columnSizing,
+		table.getState().pagination.pageIndex,
+		table.getState().pagination.pageSize,
+		columns,
+		table.getRowModel().rows.length,
+	]);
 
 	const rowVirtualizer = useVirtualizer({
 		count: table.getRowModel().rows.length,

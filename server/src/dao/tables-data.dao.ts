@@ -2,11 +2,13 @@ import { db } from "../db.js";
 
 export interface TableDataResult {
 	data: Record<string, unknown>[];
-	pagination: {
+	meta: {
 		page: number;
-		pageSize: number;
-		totalRows: number;
+		limit: number;
+		total: number;
 		totalPages: number;
+		hasNextPage: boolean;
+		hasPreviousPage: boolean;
 	};
 }
 
@@ -30,11 +32,13 @@ export const getTableData = async (
 
 		return {
 			data: dataRes.rows,
-			pagination: {
+			meta: {
 				page,
-				pageSize,
-				totalRows,
+				limit: pageSize,
+				total: totalRows,
 				totalPages,
+				hasNextPage: page < totalPages,
+				hasPreviousPage: page > 1,
 			},
 		};
 	} finally {

@@ -1,9 +1,10 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useDataGrid } from "@/hooks/use-data-grid";
 import { useTableCols } from "@/hooks/use-table-cols";
 import { useTableData } from "@/hooks/use-table-data";
 import { useActiveTableStore } from "@/stores/active-table.store";
+import { useSearchParamsUtils } from "@/utils/search-params";
 import { getCellVariant } from "@/utils/table-grid.helpers";
 import { DataGrid } from "../data-grid/data-grid";
 import { TableHeader } from "./header/table-header";
@@ -12,15 +13,12 @@ import { TableFooter } from "./table-footer";
 
 export const TableView = () => {
 	const { activeTable } = useActiveTableStore();
-	const [pageIndex, setPageIndex] = useState(0);
-	const [pageSize, setPageSize] = useState(50);
+	const { getParamAsNumber, setParams } = useSearchParamsUtils();
+	const pageSize = getParamAsNumber("pageSize") ?? 50;
+	const page = getParamAsNumber("page") ?? 1;
 
 	const { tableCols, isLoadingTableCols } = useTableCols(activeTable);
-	const { tableData, isLoadingTableData } = useTableData(
-		activeTable,
-		pageIndex + 1, // API uses 1-based pagination
-		pageSize,
-	);
+	const { tableData, isLoadingTableData } = useTableData(activeTable);
 
 	const columns = useMemo<ColumnDef<Record<string, unknown>>[]>(() => {
 		return (
@@ -44,17 +42,23 @@ export const TableView = () => {
 		enableSearch: true,
 		// server-side pagination
 		manualPagination: true,
-		pageCount: tableData?.pagination.totalPages ?? 0,
+		pageCount: tableData?.meta.totalPages ?? 0,
 		state: {
 			pagination: {
-				pageIndex,
+				pageIndex: page - 1,
 				pageSize,
 			},
 		},
 		onPaginationChange: (updater) => {
-			const newPagination = typeof updater === "function" ? updater({ pageIndex, pageSize }) : updater;
-			setPageIndex(newPagination.pageIndex);
-			setPageSize(newPagination.pageSize);
+			const currentPagination = { pageIndex: page - 1, pageSize };
+			const newPagination = typeof updater === "function" ? updater(currentPagination) : updater;
+			setParams(
+				{
+					page: newPagination.pageIndex + 1,
+					pageSize: newPagination.pageSize,
+				},
+				true,
+			);
 		},
 	});
 
@@ -73,7 +77,7 @@ export const TableView = () => {
 		<div className="flex flex-col flex-1 h-full">
 			<TableHeader />
 			<DataGrid {...dataGridProps} table={table} className="h-full" />
-			<TableFooter table={table} />
+			<TableFooter />
 		</div>
 	);
 };
