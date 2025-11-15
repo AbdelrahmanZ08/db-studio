@@ -1,4 +1,4 @@
-import { TableTab } from "@/components/table-grid/table-tab";
+import { TableTab } from "@/components/table-tab/table-tab";
 import { useActiveTabStore } from "@/stores/active-tab.store";
 
 export const MainContent = () => {

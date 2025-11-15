@@ -8,13 +8,18 @@ export interface TableDataResult {
 	};
 }
 
-export const getTableData = async (tableName: string | null, page: number = 1): Promise<TableDataResult | null> => {
+export const getTableData = async (
+	tableName: string | null,
+	page: number = 1,
+	pageSize: number = 50,
+): Promise<TableDataResult | null> => {
 	if (!tableName) {
 		return null;
 	}
 
 	const queryParams = new URLSearchParams();
 	queryParams.set("page", page.toString());
+	queryParams.set("pageSize", pageSize.toString());
 
 	try {
 		const response = await fetch(`/api/tables/${tableName}/data?${queryParams.toString()}`);

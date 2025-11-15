@@ -20,7 +20,14 @@
 			"recommended": true,
 			"a11y": {
 				"noStaticElementInteractions": "warn",
-				"useSemanticElements": "warn"
+				"useSemanticElements": "warn",
+				"useKeyWithClickEvents": "warn"
+			},
+			"suspicious": {
+				"noArrayIndexKey": "warn"
+			},
+			"correctness": {
+				"useExhaustiveDependencies": "warn"
 			}
 		}
 	},
@@ -31,7 +38,7 @@
 		"defaultBranch": "main"
 	},
 	"files": {
-		"includes": ["src/**", "!src/index.css"],
+		"includes": ["src/**", "!src/index.css", "server/src/**"],
 		"ignoreUnknown": true
 	}
 }

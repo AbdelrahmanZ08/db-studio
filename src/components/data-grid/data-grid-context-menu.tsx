@@ -11,8 +11,8 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { parseCellKey } from "@/lib/data-grid";
 import type { UpdateCell } from "@/types/data-grid";
+import { parseCellKey } from "@/utils/table-grid.helpers";
 
 interface DataGridContextMenuProps<TData> {
 	table: Table<TData>;

@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getTableData } from "@/services/get-table-data.service";
 
-export const useTableData = (tableName: string | null, page?: number) => {
+export const useTableData = (tableName: string | null, page?: number, pageSize?: number) => {
 	const { data, isLoading, error, refetch } = useQuery({
-		queryKey: ["table-data", tableName, page],
-		queryFn: () => getTableData(tableName, page),
+		queryKey: ["table-data", tableName, page, pageSize],
+		queryFn: () => getTableData(tableName, page, pageSize),
 		enabled: !!tableName,
 		staleTime: 0, // no stale time
 		gcTime: 1000 * 60 * 1, // 1 minute

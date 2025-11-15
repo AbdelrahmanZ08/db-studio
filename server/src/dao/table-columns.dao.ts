@@ -1,18 +1,19 @@
 import { db } from "../db.js";
-import { DataType, mapPostgresToDataType } from "../types/column.types.js";
+import { type DataType, mapPostgresToDataType } from "../types/column.types.js";
 
 export interface ColumnInfo {
-  columnName: string;
-  dataType: DataType;
-  isNullable: boolean;
-  columnDefault: string | null;
-  isPrimaryKey: boolean;
+	columnName: string;
+	dataType: DataType;
+	isNullable: boolean;
+	columnDefault: string | null;
+	isPrimaryKey: boolean;
 }
 
 export const getTableColumns = async (tableName: string): Promise<ColumnInfo[]> => {
-  const client = await db.connect();
-  try {
-    const res = await client.query(`
+	const client = await db.connect();
+	try {
+		const res = await client.query(
+			`
       SELECT 
         c.column_name as "columnName",
         c.data_type as "dataType",
@@ -33,16 +34,18 @@ export const getTableColumns = async (tableName: string): Promise<ColumnInfo[]> 
       WHERE c.table_schema = 'public'
         AND c.table_name = $1
       ORDER BY c.ordinal_position;
-    `, [tableName]);
+    `,
+			[tableName],
+		);
 
-    return res.rows.map(r => ({
-      columnName: r.columnName,
-      dataType: mapPostgresToDataType(r.dataType),
-      isNullable: r.isNullable,
-      columnDefault: r.columnDefault,
-      isPrimaryKey: r.isPrimaryKey
-    }));
-  } finally {
-    client.release();
-  }
-}
+		return res.rows.map((r) => ({
+			columnName: r.columnName,
+			dataType: mapPostgresToDataType(r.dataType),
+			isNullable: r.isNullable,
+			columnDefault: r.columnDefault,
+			isPrimaryKey: r.isPrimaryKey,
+		}));
+	} finally {
+		client.release();
+	}
+};

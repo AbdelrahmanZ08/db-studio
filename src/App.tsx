@@ -1,6 +1,8 @@
 import { MainContent } from "@/components/components/main-content";
 import { Tabs } from "@/components/components/tabs";
 import { Sidebar } from "@/components/sidebar/sidebar";
+import { AddRowForm } from "@/components/table-tab/add-row-form";
+import { AddTableForm } from "@/components/table-tab/add-table-form";
 import { usePersonalPreferencesStore } from "@/stores/personal-preferences.store";
 
 const App = () => {
@@ -21,6 +23,11 @@ const App = () => {
 				<Tabs />
 				<MainContent />
 			</div>
+
+			{/* Add Table Form */}
+			<AddTableForm />
+			{/* Add Row Form */}
+			<AddRowForm />
 		</div>
 	);
 };

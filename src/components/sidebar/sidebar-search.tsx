@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { useSheetStore } from "@/stores/sheet.store";
 
 export const SidebarSearch = ({
 	setSearchTerm,
@@ -8,6 +9,7 @@ export const SidebarSearch = ({
 	setSearchTerm: (searchTerm: string) => void;
 	searchTerm: string;
 }) => {
+	const { openSheet } = useSheetStore();
 	const searchInputRef = useRef<HTMLInputElement>(null);
 
 	// Handle keyboard shortcut "/" to focus search
@@ -34,6 +36,7 @@ export const SidebarSearch = ({
 			<button
 				className="w-full h-8 rounded-md bg-zinc-800 hover:bg-zinc-700 transition-colors text-sm text-zinc-300"
 				type="button"
+				onClick={() => openSheet("add-table")}
 			>
 				Add Table
 			</button>

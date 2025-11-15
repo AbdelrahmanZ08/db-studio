@@ -1,14 +1,14 @@
 import { db } from "../db.js";
 
 export interface TableInfo {
-  tableName: string;
-  rowCount: number;
+	tableName: string;
+	rowCount: number;
 }
 
 export const getTablesList = async (): Promise<TableInfo[]> => {
-  const client = await db.connect();
-  try {
-    const res = await client.query(`
+	const client = await db.connect();
+	try {
+		const res = await client.query(`
       SELECT 
         t.table_name as "tableName",
         COALESCE(s.n_live_tup, 0) as "rowCount" 
@@ -18,11 +18,11 @@ export const getTablesList = async (): Promise<TableInfo[]> => {
         AND t.table_type = 'BASE TABLE'
       ORDER BY t.table_name;
     `);
-    return res.rows.map(r => ({
-      tableName: r.tableName,
-      rowCount: Number(r.rowCount)
-    }));
-  } finally {
-    client.release();
-  }
-} 
+		return res.rows.map((r) => ({
+			tableName: r.tableName,
+			rowCount: Number(r.rowCount),
+		}));
+	} finally {
+		client.release();
+	}
+};

@@ -1,21 +1,15 @@
 "use client";
 
 import { ChevronDown, ChevronUp, X } from "lucide-react";
-import { type ChangeEvent, type KeyboardEvent, memo, type PointerEvent, useCallback, useEffect, useRef } from "react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
 import type { SearchState } from "@/types/data-grid";
 
-interface DataGridSearchProps extends SearchState {
-	onSearchOpenChange: (open: boolean) => void;
-	onSearchQueryChange: (query: string) => void;
-	onSearch: (query: string) => void;
-	onNavigateToNextMatch: () => void;
-	onNavigateToPrevMatch: () => void;
-}
+interface DataGridSearchProps extends SearchState {}
 
-export const DataGridSearch = memo(DataGridSearchImpl, (prev, next) => {
+export const DataGridSearch = React.memo(DataGridSearchImpl, (prev, next) => {
 	if (prev.searchOpen !== next.searchOpen) return false;
 
 	if (!next.searchOpen) return true;
@@ -51,9 +45,9 @@ function DataGridSearchImpl({
 	onNavigateToNextMatch,
 	onNavigateToPrevMatch,
 }: DataGridSearchProps) {
-	const inputRef = useRef<HTMLInputElement>(null);
+	const inputRef = React.useRef<HTMLInputElement>(null);
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (searchOpen) {
 			requestAnimationFrame(() => {
 				inputRef.current?.focus();
@@ -61,10 +55,10 @@ function DataGridSearchImpl({
 		}
 	}, [searchOpen]);
 
-	useEffect(() => {
+	React.useEffect(() => {
 		if (!searchOpen) return;
 
-		function onEscape(event: globalThis.KeyboardEvent) {
+		function onEscape(event: KeyboardEvent) {
 			if (event.key === "Escape") {
 				event.preventDefault();
 				onSearchOpenChange(false);
@@ -75,8 +69,8 @@ function DataGridSearchImpl({
 		return () => document.removeEventListener("keydown", onEscape);
 	}, [searchOpen, onSearchOpenChange]);
 
-	const onKeyDown = useCallback(
-		(event: KeyboardEvent) => {
+	const onKeyDown = React.useCallback(
+		(event: React.KeyboardEvent) => {
 			event.stopPropagation();
 
 			if (event.key === "Enter") {
@@ -95,8 +89,8 @@ function DataGridSearchImpl({
 		onSearch(query);
 	}, 150);
 
-	const onChange = useCallback(
-		(event: ChangeEvent<HTMLInputElement>) => {
+	const onChange = React.useCallback(
+		(event: React.ChangeEvent<HTMLInputElement>) => {
 			const value = event.target.value;
 			onSearchQueryChange(value);
 			debouncedSearch(value);
@@ -104,7 +98,7 @@ function DataGridSearchImpl({
 		[onSearchQueryChange, debouncedSearch],
 	);
 
-	const onTriggerPointerDown = useCallback((event: PointerEvent<HTMLButtonElement>) => {
+	const onTriggerPointerDown = React.useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
 		// prevent implicit pointer capture
 		const target = event.target;
 		if (!(target instanceof HTMLElement)) return;
@@ -124,17 +118,17 @@ function DataGridSearchImpl({
 		}
 	}, []);
 
-	const onPrevMatchPointerDown = useCallback(
-		(event: PointerEvent<HTMLButtonElement>) => onTriggerPointerDown(event),
+	const onPrevMatchPointerDown = React.useCallback(
+		(event: React.PointerEvent<HTMLButtonElement>) => onTriggerPointerDown(event),
 		[onTriggerPointerDown],
 	);
 
-	const onNextMatchPointerDown = useCallback(
-		(event: PointerEvent<HTMLButtonElement>) => onTriggerPointerDown(event),
+	const onNextMatchPointerDown = React.useCallback(
+		(event: React.PointerEvent<HTMLButtonElement>) => onTriggerPointerDown(event),
 		[onTriggerPointerDown],
 	);
 
-	const onClose = useCallback(() => {
+	const onClose = React.useCallback(() => {
 		onSearchOpenChange(false);
 	}, [onSearchOpenChange]);
 
@@ -144,7 +138,7 @@ function DataGridSearchImpl({
 		<div
 			role="search"
 			data-slot="grid-search"
-			className="fade-in-0 slide-in-from-top-2 absolute top-4 right-4 z-50 flex animate-in flex-col gap-2 rounded-lg border border-zinc-800 bg-background p-2 shadow-lg"
+			className="fade-in-0 slide-in-from-top-2 absolute top-4 right-4 z-50 flex animate-in flex-col gap-2 rounded-lg border bg-background p-2 shadow-lg"
 		>
 			<div className="flex items-center gap-2">
 				<Input

@@ -1,3 +1,5 @@
+"use client";
+
 import {
 	type ColumnDef,
 	getCoreRowModel,
@@ -9,18 +11,9 @@ import {
 	useReactTable,
 } from "@tanstack/react-table";
 import { useVirtualizer, type Virtualizer } from "@tanstack/react-virtual";
-import {
-	type MouseEvent,
-	type RefObject,
-	useCallback,
-	useEffect,
-	useLayoutEffect,
-	useMemo,
-	useRef,
-	useSyncExternalStore,
-} from "react";
+import { type MouseEvent, useCallback, useEffect, useMemo, useRef } from "react";
 import { DataGridCell } from "@/components/data-grid/data-grid-cell";
-import { getCellKey, parseCellKey } from "@/lib/data-grid";
+import { useTableGridStore } from "@/stores/table-grid.store";
 import type {
 	CellPosition,
 	ContextMenuState,
@@ -29,7 +22,10 @@ import type {
 	SelectionState,
 	UpdateCell,
 } from "@/types/data-grid";
+import { getCellKey, parseCellKey } from "@/utils/table-grid.helpers";
+import { useAsRef, useIsomorphicLayoutEffect } from "./use-as-ref";
 
+const DEFAULT_ROW_HEIGHT = 36;
 const OVERSCAN = 3;
 const VIEWPORT_OFFSET = 1;
 const MIN_COLUMN_SIZE = 60;
@@ -37,27 +33,7 @@ const MAX_COLUMN_SIZE = 800;
 const SEARCH_SHORTCUT_KEY = "f";
 const NON_NAVIGABLE_COLUMN_IDS = ["select", "actions"];
 
-const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
-
-function useLazyRef<T>(fn: () => T): RefObject<T> {
-	const ref = useRef<T | null>(null);
-	if (ref.current === null) {
-		ref.current = fn();
-	}
-	return ref as RefObject<T>;
-}
-
-function useAsRef<T>(data: T) {
-	const ref = useRef<T>(data);
-
-	useIsomorphicLayoutEffect(() => {
-		ref.current = data;
-	});
-
-	return ref;
-}
-
-interface DataGridState {
+export interface DataGridState {
 	sorting: SortingState;
 	rowSelection: RowSelectionState;
 	selectionState: SelectionState;
@@ -72,21 +48,7 @@ interface DataGridState {
 	isScrolling: boolean;
 }
 
-interface DataGridStore {
-	subscribe: (callback: () => void) => () => void;
-	getState: () => DataGridState;
-	setState: <K extends keyof DataGridState>(key: K, value: DataGridState[K]) => void;
-	notify: () => void;
-	batch: (fn: () => void) => void;
-}
-
-function useStore<T>(store: DataGridStore, selector: (state: DataGridState) => T): T {
-	const getSnapshot = useCallback(() => selector(store.getState()), [store, selector]);
-
-	return useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
-}
-
-interface UseDataGridProps<TData> extends Omit<TableOptions<TData>, "pageCount" | "getCoreRowModel"> {
+interface UseDataGridProps<TData> extends Omit<TableOptions<TData>, "getCoreRowModel"> {
 	onDataChange?: (data: TData[]) => void;
 	onRowAdd?: (event?: MouseEvent<HTMLDivElement>) =>
 		| Partial<CellPosition>
@@ -101,7 +63,7 @@ interface UseDataGridProps<TData> extends Omit<TableOptions<TData>, "pageCount" 
 	enableSearch?: boolean;
 }
 
-export function useDataGrid<TData>({
+function useDataGrid<TData>({
 	columns,
 	data,
 	onDataChange,
@@ -119,100 +81,24 @@ export function useDataGrid<TData>({
 	const rowVirtualizerRef = useRef<Virtualizer<HTMLDivElement, Element>>(null);
 	const headerRef = useRef<HTMLDivElement>(null);
 	const rowMapRef = useRef<Map<number, HTMLDivElement>>(new Map());
+	// const footerRef = useRef<HTMLDivElement>(null);
 
 	const dataGridPropsRef = useAsRef(dataGridProps);
-	const listenersRef = useLazyRef(() => new Set<() => void>());
 
-	const stateRef = useLazyRef<DataGridState>(() => {
-		return {
-			sorting: initialState?.sorting ?? [],
-			rowSelection: initialState?.rowSelection ?? {},
-			selectionState: {
-				selectedCells: new Set(),
-				selectionRange: null,
-				isSelecting: false,
-			},
-			focusedCell: null,
-			editingCell: null,
-			contextMenu: {
-				open: false,
-				x: 0,
-				y: 0,
-			},
-			searchQuery: "",
-			searchMatches: [],
-			matchIndex: -1,
-			searchOpen: false,
-			lastClickedRowIndex: null,
-			isScrolling: false,
-		};
-	});
-
-	const store = useMemo<DataGridStore>(() => {
-		let isBatching = false;
-		let pendingNotification = false;
-
-		return {
-			subscribe: (callback) => {
-				listenersRef.current.add(callback);
-				return () => listenersRef.current.delete(callback);
-			},
-			getState: () => stateRef.current,
-			setState: (key, value) => {
-				if (Object.is(stateRef.current[key], value)) return;
-				stateRef.current[key] = value;
-
-				if (isBatching) {
-					pendingNotification = true;
-				} else {
-					if (!pendingNotification) {
-						pendingNotification = true;
-						queueMicrotask(() => {
-							pendingNotification = false;
-							store.notify();
-						});
-					}
-				}
-			},
-			notify: () => {
-				for (const listener of listenersRef.current) {
-					listener();
-				}
-			},
-			batch: (fn) => {
-				if (isBatching) {
-					fn();
-					return;
-				}
-
-				isBatching = true;
-				const wasPending = pendingNotification;
-				pendingNotification = false;
-
-				try {
-					fn();
-				} finally {
-					isBatching = false;
-					if (pendingNotification || wasPending) {
-						pendingNotification = false;
-						store.notify();
-					}
-				}
-			},
-		};
-	}, [listenersRef, stateRef]);
-
-	const focusedCell = useStore(store, (state) => state.focusedCell);
-	const editingCell = useStore(store, (state) => state.editingCell);
-	const selectionState = useStore(store, (state) => state.selectionState);
-	const searchQuery = useStore(store, (state) => state.searchQuery);
-	const searchMatches = useStore(store, (state) => state.searchMatches);
-	const matchIndex = useStore(store, (state) => state.matchIndex);
-	const searchOpen = useStore(store, (state) => state.searchOpen);
-	const sorting = useStore(store, (state) => state.sorting);
-	const rowSelection = useStore(store, (state) => state.rowSelection);
-	const contextMenu = useStore(store, (state) => state.contextMenu);
-	const isScrolling = useStore(store, (state) => state.isScrolling);
+	const {
+		store,
+		focusedCell,
+		editingCell,
+		selectionState,
+		searchQuery,
+		searchMatches,
+		matchIndex,
+		searchOpen,
+		sorting,
+		rowSelection,
+		contextMenu,
+		isScrolling,
+	} = useTableGridStore({ initialState: initialState as DataGridState });
 
 	const columnIds = useMemo(() => {
 		return columns
@@ -542,13 +428,15 @@ export function useDataGrid<TData>({
 					// Check viewport boundaries
 					const containerRect = container.getBoundingClientRect();
 					const headerHeight = headerRef.current?.getBoundingClientRect().height ?? 0;
+					// const footerHeight = footerRef.current?.getBoundingClientRect().height ?? 0;
 
 					const viewportTop = containerRect.top + headerHeight + VIEWPORT_OFFSET;
+					const viewportBottom = containerRect.bottom - VIEWPORT_OFFSET;
 
 					// If target row already exists, check if it's visible
 					if (targetRow) {
 						const rowRect = targetRow.getBoundingClientRect();
-						const isFullyVisible = rowRect.top >= viewportTop;
+						const isFullyVisible = rowRect.top >= viewportTop && rowRect.bottom <= viewportBottom;
 
 						if (isFullyVisible) {
 							// Row is fully visible, just focus it
@@ -561,6 +449,8 @@ export function useDataGrid<TData>({
 
 						if (direction === "down") {
 							// Scroll just enough to show the row at the bottom
+							const scrollNeeded = rowRect.bottom - viewportBottom;
+							container.scrollTop += scrollNeeded;
 						} else {
 							// Scroll just enough to show the row at the top
 							const scrollNeeded = viewportTop - rowRect.top;
@@ -575,11 +465,11 @@ export function useDataGrid<TData>({
 
 					// Scroll by exactly one row height to reveal it smoothly
 					if (direction === "down") {
-						container.scrollTop += 36;
+						container.scrollTop += DEFAULT_ROW_HEIGHT;
 					} else {
 						// For arrow up, ensure we don't go below 0
 						const currentScrollTop = container.scrollTop;
-						const targetScrollTop = Math.max(0, currentScrollTop - 36);
+						const targetScrollTop = Math.max(0, currentScrollTop - DEFAULT_ROW_HEIGHT);
 						container.scrollTop = targetScrollTop;
 					}
 					return;
@@ -1347,12 +1237,12 @@ export function useDataGrid<TData>({
 			colSizes[`--col-${header.column.id}-size`] = header.column.getSize();
 		}
 		return colSizes;
-	}, [table.getState().columnSizingInfo, table.getState().columnSizing, columns]);
+	}, [table.getState().columnSizingInfo, table.getState().columnSizing, table.getState().pagination, columns]);
 
 	const rowVirtualizer = useVirtualizer({
 		count: table.getRowModel().rows.length,
 		getScrollElement: () => dataGridRef.current,
-		estimateSize: () => 36,
+		estimateSize: () => DEFAULT_ROW_HEIGHT,
 		overscan,
 		measureElement:
 			typeof window !== "undefined" && navigator.userAgent.indexOf("Firefox") === -1
@@ -1557,7 +1447,7 @@ export function useDataGrid<TData>({
 	}, [autoFocus, data.length, columns.length, store, navigableColumnIds, focusCell]);
 
 	useEffect(() => {
-		function onOutsideClick(event: globalThis.MouseEvent) {
+		function onOutsideClick(event: MouseEvent) {
 			if (event.button === 2) {
 				return;
 			}
@@ -1637,6 +1527,7 @@ export function useDataGrid<TData>({
 		dataGridRef,
 		headerRef,
 		rowMapRef,
+		// footerRef,
 		table,
 		rowVirtualizer,
 		searchState,
@@ -1644,3 +1535,5 @@ export function useDataGrid<TData>({
 		onRowAdd: onRowAddProp ? onRowAdd : undefined,
 	};
 }
+
+export { useDataGrid };

@@ -5,31 +5,27 @@ export interface CellSelectOption {
 	value: string;
 }
 
-export type DataType = "short-text" | "long-text" | "boolean" | "number" | "array";
-
-export type Cell =
+export type CellVariant =
 	| {
-		variant: "short-text";
-	}
+			variant: "short-text";
+	  }
 	| {
-		variant: "long-text";
-	}
+			variant: "long-text";
+	  }
 	| {
-		variant: "boolean";
-	}
+			variant: "number";
+	  }
 	| {
-		variant: "number";
-		min?: number;
-		max?: number;
-		step?: number;
-	}
+			variant: "select";
+			options: CellSelectOption[];
+	  }
 	| {
-		variant: "select";
-		options: CellSelectOption[];
-	}
+			variant: "multi-select";
+			options: CellSelectOption[];
+	  }
 	| {
-		variant: "checkbox";
-	}
+			variant: "boolean";
+	  };
 
 export interface UpdateCell {
 	rowIndex: number;
@@ -38,12 +34,14 @@ export interface UpdateCell {
 }
 
 declare module "@tanstack/react-table" {
-	interface ColumnMeta {
+	// biome-ignore lint/correctness/noUnusedVariables: TData and TValue are used in the ColumnMeta interface
+	interface ColumnMeta<TData extends RowData, TValue> {
 		label?: string;
-		cell?: Cell;
+		cell?: CellVariant;
 	}
 
-	interface TableMeta<_TData extends RowData> {
+	// biome-ignore lint/correctness/noUnusedVariables: TData is used in the TableMeta interface
+	interface TableMeta<TData extends RowData> {
 		dataGridRef?: React.RefObject<HTMLElement | null>;
 		focusedCell?: CellPosition | null;
 		editingCell?: CellPosition | null;

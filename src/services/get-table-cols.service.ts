@@ -1,4 +1,4 @@
-import type { DataType } from "@/types/data-grid";
+import type { DataType } from "@/types/table-grid.type";
 
 export interface ColumnInfo {
 	columnName: string;

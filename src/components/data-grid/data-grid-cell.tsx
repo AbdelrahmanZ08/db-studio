@@ -2,14 +2,7 @@
 
 import type { Cell, Table } from "@tanstack/react-table";
 
-import {
-	BooleanCell,
-	CheckboxCell,
-	LongTextCell,
-	NumberCell,
-	SelectCell,
-	ShortTextCell,
-} from "@/components/data-grid/data-grid-cell-variants";
+import { LongTextCell, NumberCell, SelectCell, ShortTextCell } from "@/components/data-grid/data-grid-cell-variants";
 
 interface DataGridCellProps<TData> {
 	cell: Cell<TData, unknown>;
@@ -30,7 +23,7 @@ export function DataGridCell<TData>({ cell, table }: DataGridCellProps<TData>) {
 	const isSelected = meta?.getIsCellSelected?.(rowIndex, columnId) ?? false;
 
 	const cellOpts = cell.column.columnDef.meta?.cell;
-	const variant = cellOpts?.variant ?? "short-text";
+	const variant = cellOpts?.variant ?? "text";
 
 	switch (variant) {
 		case "short-text":
@@ -57,18 +50,6 @@ export function DataGridCell<TData>({ cell, table }: DataGridCellProps<TData>) {
 					isSelected={isSelected}
 				/>
 			);
-		case "boolean":
-			return (
-				<BooleanCell
-					cell={cell}
-					table={table}
-					rowIndex={rowIndex}
-					columnId={columnId}
-					isEditing={isEditing}
-					isFocused={isFocused}
-					isSelected={isSelected}
-				/>
-			);
 		case "number":
 			return (
 				<NumberCell
@@ -84,18 +65,6 @@ export function DataGridCell<TData>({ cell, table }: DataGridCellProps<TData>) {
 		case "select":
 			return (
 				<SelectCell
-					cell={cell}
-					table={table}
-					rowIndex={rowIndex}
-					columnId={columnId}
-					isEditing={isEditing}
-					isFocused={isFocused}
-					isSelected={isSelected}
-				/>
-			);
-		case "checkbox":
-			return (
-				<CheckboxCell
 					cell={cell}
 					table={table}
 					rowIndex={rowIndex}

@@ -1,7 +1,7 @@
 "use client";
 
 import { flexRender } from "@tanstack/react-table";
-import { type ComponentProps, type MouseEvent, useCallback } from "react";
+import { type ComponentProps, useCallback } from "react";
 import { DataGridColumnHeader } from "@/components/data-grid/data-grid-column-header";
 import { DataGridContextMenu } from "@/components/data-grid/data-grid-context-menu";
 import { DataGridRow } from "@/components/data-grid/data-grid-row";
@@ -29,12 +29,16 @@ export function DataGrid<TData>({
 	const meta = table.options.meta;
 	const focusedCell = meta?.focusedCell ?? null;
 
-	const onGridContextMenu = useCallback((event: MouseEvent<HTMLDivElement>) => {
+	const onGridContextMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
 		event.preventDefault();
 	}, []);
 
 	return (
-		<div data-slot="grid-wrapper" className={cn("relative flex w-full flex-col", className)} {...props}>
+		<div
+			data-slot="grid-wrapper"
+			className={cn("relative overflow-hidden flex h-full w-full flex-col", className)}
+			{...props}
+		>
 			{searchState && <DataGridSearch {...searchState} />}
 			<DataGridContextMenu table={table} />
 			<div
@@ -45,17 +49,15 @@ export function DataGrid<TData>({
 				data-slot="grid"
 				tabIndex={0}
 				ref={dataGridRef}
-				className="relative h-full grid select-none overflow-auto focus:outline-none"
-				style={{
-					...columnSizeVars,
-				}}
+				className="relative h-fit w-full grid select-none overflow-y-auto focus:outline-none"
+				style={{ ...columnSizeVars }}
 				onContextMenu={onGridContextMenu}
 			>
 				<div
 					role="rowgroup"
 					data-slot="grid-header"
 					ref={headerRef}
-					className="sticky top-0 z-10 grid border-b border-zinc-800 bg-zinc-950"
+					className="sticky top-0 z-10 grid border-b border-zinc-800 bg-zinc-950 max-h-9"
 				>
 					{table.getHeaderGroups().map((headerGroup, rowIndex) => (
 						<div
@@ -64,7 +66,7 @@ export function DataGrid<TData>({
 							aria-rowindex={rowIndex + 1}
 							data-slot="grid-header-row"
 							tabIndex={-1}
-							className="flex w-full h-9"
+							className="flex w-full h-fit max-h-9"
 						>
 							{headerGroup.headers.map((header, colIndex) => {
 								const sorting = table.getState().sorting;
@@ -87,7 +89,7 @@ export function DataGrid<TData>({
 										}
 										data-slot="grid-header-cell"
 										tabIndex={-1}
-										className={cn("relative max-h-9", {
+										className={cn("relative", {
 											"border-r border-zinc-800": header.column.id !== "select",
 										})}
 										style={{
@@ -95,7 +97,7 @@ export function DataGrid<TData>({
 										}}
 									>
 										{header.isPlaceholder ? null : typeof header.column.columnDef.header === "function" ? (
-											<div className="size-full px-3 py-1.5">
+											<div className="px-3 py-1.5">
 												{flexRender(header.column.columnDef.header, header.getContext())}
 											</div>
 										) : (
@@ -107,6 +109,7 @@ export function DataGrid<TData>({
 						</div>
 					))}
 				</div>
+
 				<div
 					role="rowgroup"
 					data-slot="grid-body"
@@ -131,40 +134,6 @@ export function DataGrid<TData>({
 						);
 					})}
 				</div>
-
-				{/* {onRowAdd && (
-					<div
-						role="rowgroup"
-						data-slot="grid-footer"
-						ref={footerRef}
-						className="sticky bottom-0 z-10 grid border-t border-zinc-800 bg-black"
-					>
-						<div
-							role="row"
-							aria-rowindex={rows.length + 2}
-							data-slot="grid-add-row"
-							tabIndex={-1}
-							className="flex w-full"
-						>
-							<div
-								role="gridcell"
-								tabIndex={0}
-								className="relative flex h-9 grow items-center bg-zinc-900 transition-colors hover:bg-zinc-800 focus:bg-zinc-800 focus:outline-none"
-								style={{
-									width: table.getTotalSize(),
-									minWidth: table.getTotalSize(),
-								}}
-								onClick={onRowAdd}
-								onKeyDown={onAddRowKeyDown}
-							>
-								<div className="sticky left-0 flex items-center gap-2 px-3 text-muted-foreground">
-									<Plus className="size-3.5" />
-									<span className="text-sm">Add row</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				)} */}
 			</div>
 		</div>
 	);

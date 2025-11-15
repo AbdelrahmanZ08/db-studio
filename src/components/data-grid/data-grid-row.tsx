@@ -3,9 +3,9 @@
 import { flexRender, type Row } from "@tanstack/react-table";
 import type { Virtualizer } from "@tanstack/react-virtual";
 import * as React from "react";
-import { useComposedRefs } from "@/lib/compose-refs";
 import type { CellPosition } from "@/types/data-grid";
 import { cn } from "@/utils/cn";
+import { useComposedRefs } from "@/utils/compose-refs";
 
 interface DataGridRowProps<TData> extends React.ComponentProps<"div"> {
 	row: Row<TData>;

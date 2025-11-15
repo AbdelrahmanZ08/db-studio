@@ -14,7 +14,6 @@ import {
 	PinIcon,
 	PinOffIcon,
 	TextInitialIcon,
-	ToggleLeftIcon,
 	XIcon,
 } from "lucide-react";
 import * as React from "react";
@@ -40,8 +39,6 @@ function getColumnVariant(variant?: Cell["variant"]): {
 			return { icon: BaselineIcon, label: "Short text" };
 		case "long-text":
 			return { icon: TextInitialIcon, label: "Long text" };
-		case "boolean":
-			return { icon: ToggleLeftIcon, label: "Boolean" };
 		case "number":
 			return { icon: HashIcon, label: "Number" };
 		case "select":
@@ -162,7 +159,7 @@ export function DataGridColumnHeader<TData, TValue>({
 					</div>
 					<ChevronDownIcon className="shrink-0 text-muted-foreground" />
 				</DropdownMenuTrigger>
-				<DropdownMenuContent align="start" side="bottom" sideOffset={0} className="w-60">
+				<DropdownMenuContent align="start" sideOffset={0} className="w-60">
 					{column.getCanSort() && (
 						<>
 							<DropdownMenuCheckboxItem

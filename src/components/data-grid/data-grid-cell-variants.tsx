@@ -157,7 +157,7 @@ export function ShortTextCell<TData>({
 				onInput={onInput}
 				suppressContentEditableWarning
 				className={cn("size-full overflow-hidden outline-none", {
-					"whitespace-nowrap **:inline **:whitespace-nowrap [&_br]:hidden": isEditing,
+					"whitespace-nowrap [&_*]:inline [&_*]:whitespace-nowrap [&_br]:hidden": isEditing,
 				})}
 			>
 				{displayValue}
@@ -354,10 +354,6 @@ export function NumberCell<TData>({
 	const inputRef = useRef<HTMLInputElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
 	const meta = table.options.meta;
-	const cellOpts = cell.column.columnDef.meta?.cell;
-	const min = cellOpts?.variant === "number" ? cellOpts.min : undefined;
-	const max = cellOpts?.variant === "number" ? cellOpts.max : undefined;
-	const step = cellOpts?.variant === "number" ? cellOpts.step : undefined;
 
 	const onBlur = useCallback(() => {
 		const numValue = value === "" ? null : Number(value);
@@ -439,9 +435,6 @@ export function NumberCell<TData>({
 					ref={inputRef}
 					type="number"
 					value={value}
-					min={min}
-					max={max}
-					step={step}
 					onBlur={onBlur}
 					onChange={onChange}
 					className="w-full border-none bg-transparent p-0 outline-none"
@@ -511,124 +504,6 @@ export function SelectCell<TData>({
 
 	useEffect(() => {
 		setValue(initialValue);
-	}, [initialValue]);
-
-	useEffect(() => {
-		if (isEditing && !open) {
-			setOpen(true);
-		}
-		if (isFocused && !isEditing && !meta?.searchOpen && !meta?.isScrolling && containerRef.current) {
-			containerRef.current.focus();
-		}
-	}, [isFocused, isEditing, open, meta?.searchOpen, meta?.isScrolling]);
-
-	const displayLabel = options.find((opt) => opt.value === value)?.label ?? value;
-
-	return (
-		<DataGridCellWrapper
-			ref={containerRef}
-			cell={cell}
-			table={table}
-			rowIndex={rowIndex}
-			columnId={columnId}
-			isEditing={isEditing}
-			isFocused={isFocused}
-			isSelected={isSelected}
-			onKeyDown={onWrapperKeyDown}
-		>
-			{isEditing ? (
-				<Select value={value} onValueChange={onValueChange} open={open} onOpenChange={onOpenChange}>
-					<SelectTrigger
-						size="sm"
-						className="size-full items-start border-none p-0 shadow-none focus-visible:ring-0 dark:bg-transparent [&_svg]:hidden"
-					>
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent
-						data-grid-cell-editor=""
-						// compensate for the wrapper padding
-						align="start"
-						alignOffset={-8}
-						sideOffset={-8}
-						className="min-w-[calc(var(--radix-select-trigger-width)+16px)]"
-					>
-						{options.map((option) => (
-							<SelectItem key={option.value} value={option.value}>
-								{option.label}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-			) : (
-				<span data-slot="grid-cell-content">{displayLabel}</span>
-			)}
-		</DataGridCellWrapper>
-	);
-}
-
-export function BooleanCell<TData>({
-	cell,
-	table,
-	rowIndex,
-	columnId,
-	isFocused,
-	isEditing,
-	isSelected,
-}: CellVariantProps<TData>) {
-	const initialValue = cell.getValue();
-	const [value, setValue] = useState(String(initialValue));
-	const [open, setOpen] = useState(false);
-	const containerRef = useRef<HTMLDivElement>(null);
-	const meta = table.options.meta;
-
-	const options = [
-		{ value: "true", label: "true" },
-		{ value: "false", label: "false" },
-	];
-
-	const onValueChange = useCallback(
-		(newValue: string) => {
-			setValue(newValue);
-			// Convert string to boolean for the data update
-			const booleanValue = newValue === "true";
-			meta?.onDataUpdate?.({ rowIndex, columnId, value: booleanValue });
-			meta?.onCellEditingStop?.();
-		},
-		[meta, rowIndex, columnId],
-	);
-
-	const onOpenChange = useCallback(
-		(isOpen: boolean) => {
-			setOpen(isOpen);
-			if (!isOpen) {
-				meta?.onCellEditingStop?.();
-			}
-		},
-		[meta],
-	);
-
-	const onWrapperKeyDown = useCallback(
-		(event: KeyboardEvent<HTMLDivElement>) => {
-			if (isEditing) {
-				if (event.key === "Escape") {
-					event.preventDefault();
-					setValue(String(initialValue));
-					setOpen(false);
-					meta?.onCellEditingStop?.();
-				} else if (event.key === "Tab") {
-					event.preventDefault();
-					setOpen(false);
-					meta?.onCellEditingStop?.({
-						direction: event.shiftKey ? "left" : "right",
-					});
-				}
-			}
-		},
-		[isEditing, initialValue, meta],
-	);
-
-	useEffect(() => {
-		setValue(String(initialValue));
 	}, [initialValue]);
 
 	useEffect(() => {
