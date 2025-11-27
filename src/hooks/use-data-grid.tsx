@@ -1228,7 +1228,6 @@ function useDataGrid<TData>({
 		tableRef.current = table;
 	}
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: we need to memoize the column size vars
 	const columnSizeVars = useMemo(() => {
 		const headers = table.getFlatHeaders();
 		const colSizes: { [key: string]: number } = {};
@@ -1242,8 +1241,8 @@ function useDataGrid<TData>({
 		table.getState().columnSizing,
 		table.getState().pagination.pageIndex,
 		table.getState().pagination.pageSize,
-		columns,
 		table.getRowModel().rows.length,
+		columns,
 	]);
 
 	const rowVirtualizer = useVirtualizer({

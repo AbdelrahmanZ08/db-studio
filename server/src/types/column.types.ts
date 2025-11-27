@@ -1,40 +1,39 @@
-/**
- * Simplified, generalized data types for frontend rendering
- * Makes it easy to determine which cell component to use
- */
-export enum DataType {
-	// Short text - for single-line text input
-	short_text = "short-text",
+export const DataTypes = {
+	short: "short",
+	long: "long",
+	boolean: "boolean",
+	number: "number",
+	enum: "enum",
+	json: "json",
+} as const;
 
-	// Long text - for multi-line text input
-	long_text = "long-text",
-
-	// Boolean - for checkbox/toggle
-	boolean = "boolean",
-
-	// Numeric types - for number input
-	number = "number",
-
-	// Array - for array viewer/editor
-	// array = "array",
-
-	// Enum - for dropdown/select with predefined values
-	// enum = "enum",
-}
+export type DataTypes = (typeof DataTypes)[keyof typeof DataTypes];
 
 /**
  * Maps PostgreSQL data types to generic DataType enum
  */
-export function mapPostgresToDataType(pgType: string): DataType {
-	// Normalize to lowercase and handle composite types
+export function mapPostgresToDataType(pgType: string): DataTypes {
 	const normalized = pgType.toLowerCase().trim();
 
-	// Handle array types
-	if (normalized.startsWith("array") || normalized.includes("[]")) {
-		return DataType.long_text;
+	// Handle array types and date/time types
+	if (
+		normalized.startsWith("array") ||
+		normalized.includes("[]") ||
+		normalized === "date" ||
+		normalized === "time" ||
+		normalized === "time without time zone" ||
+		normalized.startsWith("time(") ||
+		normalized === "timestamp" ||
+		normalized === "timestamp without time zone" ||
+		normalized.startsWith("timestamp(") ||
+		normalized === "timestamp with time zone" ||
+		normalized === "timestamptz" ||
+		normalized.startsWith("timestamp with time zone(")
+	) {
+		return DataTypes.long;
 	}
 
-	// Numeric types - map to number
+	// Numeric types
 	if (
 		normalized === "integer" ||
 		normalized === "int" ||
@@ -58,25 +57,25 @@ export function mapPostgresToDataType(pgType: string): DataType {
 		normalized === "serial8" ||
 		normalized === "money"
 	) {
-		return DataType.number;
+		return DataTypes.number;
 	}
 
 	// Boolean
 	if (normalized === "boolean" || normalized === "bool") {
-		return DataType.boolean;
+		return DataTypes.boolean;
 	}
 
-	// Enum types
-	if (normalized.startsWith("user-defined") || normalized === "enum") {
-		return DataType.long_text;
+	// JSON types
+	if (normalized === "json" || normalized === "jsonb") {
+		return DataTypes.json;
 	}
 
-	// Long string types (text, xml, json)
-	if (normalized === "text" || normalized === "xml" || normalized === "json" || normalized === "jsonb") {
-		return DataType.long_text;
+	// Enum types and long text types
+	if (normalized.startsWith("user-defined") || normalized === "enum" || normalized === "text" || normalized === "xml") {
+		return DataTypes.long;
 	}
 
-	// Short string types (varchar, char, uuid, date, timestamp, etc.)
+	// Short string types (varchar, char, uuid, etc.)
 	if (
 		normalized === "character varying" ||
 		normalized.startsWith("varchar") ||
@@ -86,16 +85,6 @@ export function mapPostgresToDataType(pgType: string): DataType {
 		normalized.startsWith("character(") ||
 		normalized === "bpchar" ||
 		normalized === "uuid" ||
-		normalized === "date" ||
-		normalized === "time" ||
-		normalized === "time without time zone" ||
-		normalized.startsWith("time(") ||
-		normalized === "timestamp" ||
-		normalized === "timestamp without time zone" ||
-		normalized.startsWith("timestamp(") ||
-		normalized === "timestamp with time zone" ||
-		normalized === "timestamptz" ||
-		normalized.startsWith("timestamp with time zone(") ||
 		normalized === "interval" ||
 		normalized.startsWith("interval") ||
 		normalized === "bytea" ||
@@ -107,11 +96,11 @@ export function mapPostgresToDataType(pgType: string): DataType {
 		normalized === "macaddr" ||
 		normalized === "macaddr8"
 	) {
-		return DataType.short_text;
+		return DataTypes.short;
 	}
 
-	// Default to short-text for unrecognized types
-	return DataType.short_text;
+	// Default to short for unrecognized types
+	return DataTypes.short;
 }
 
 /**
@@ -281,80 +270,4 @@ export function standardizeDataTypeLabel(pgType: string): string {
 
 	// Default: return the original type
 	return pgType;
-}
-
-/**
- * Maps MySQL data types to generic DataType enum
- */
-export function mapMySQLToDataType(mysqlType: string): DataType {
-	const normalized = mysqlType.toLowerCase().trim();
-
-	// Boolean (MySQL uses TINYINT(1)) - check this first before numeric
-	if (normalized === "boolean" || normalized === "bool" || normalized === "tinyint(1)") {
-		return DataType.boolean;
-	}
-
-	// Enum types
-	if (normalized.startsWith("enum(") || normalized.startsWith("set(")) {
-		return DataType.long_text;
-	}
-
-	// Numeric types - map to number
-	if (
-		normalized === "int" ||
-		normalized === "integer" ||
-		normalized.startsWith("int(") ||
-		normalized === "bigint" ||
-		normalized.startsWith("bigint(") ||
-		normalized === "smallint" ||
-		normalized.startsWith("smallint(") ||
-		normalized === "tinyint" ||
-		normalized.startsWith("tinyint(") ||
-		normalized === "mediumint" ||
-		normalized.startsWith("mediumint(") ||
-		normalized === "decimal" ||
-		normalized.startsWith("decimal(") ||
-		normalized === "numeric" ||
-		normalized.startsWith("numeric(") ||
-		normalized === "float" ||
-		normalized.startsWith("float(") ||
-		normalized === "double" ||
-		normalized.startsWith("double(")
-	) {
-		return DataType.number;
-	}
-
-	// Long string types (text variants, json)
-	if (
-		normalized === "text" ||
-		normalized === "longtext" ||
-		normalized === "mediumtext" ||
-		normalized === "tinytext" ||
-		normalized === "json"
-	) {
-		return DataType.long_text;
-	}
-
-	// Short string types (varchar, char, date/time, binary, etc.)
-	if (
-		normalized === "varchar" ||
-		normalized.startsWith("varchar(") ||
-		normalized === "char" ||
-		normalized.startsWith("char(") ||
-		normalized === "date" ||
-		normalized === "time" ||
-		normalized === "datetime" ||
-		normalized === "timestamp" ||
-		normalized === "year" ||
-		normalized === "blob" ||
-		normalized === "longblob" ||
-		normalized === "mediumblob" ||
-		normalized === "tinyblob" ||
-		normalized === "binary" ||
-		normalized === "varbinary"
-	) {
-		return DataType.short_text;
-	}
-
-	return DataType.short_text;
 }

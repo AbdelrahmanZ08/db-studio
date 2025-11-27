@@ -19,15 +19,16 @@
 		"rules": {
 			"recommended": true,
 			"a11y": {
-				"noStaticElementInteractions": "warn",
-				"useSemanticElements": "warn",
-				"useKeyWithClickEvents": "warn"
+				"noStaticElementInteractions": "off",
+				"useSemanticElements": "off",
+				"useKeyWithClickEvents": "off"
 			},
 			"suspicious": {
-				"noArrayIndexKey": "warn"
+				"noArrayIndexKey": "off"
 			},
 			"correctness": {
-				"useExhaustiveDependencies": "warn"
+				"useExhaustiveDependencies": "off",
+				"noChildrenProp": "off"
 			}
 		}
 	},

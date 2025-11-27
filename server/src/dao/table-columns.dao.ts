@@ -1,9 +1,9 @@
 import { db } from "../db.js";
-import { type DataType, mapPostgresToDataType, standardizeDataTypeLabel } from "../types/column.types.js";
+import { type DataTypes, mapPostgresToDataType, standardizeDataTypeLabel } from "../types/column.types.js";
 
 export interface ColumnInfo {
 	columnName: string;
-	dataType: DataType;
+	dataType: DataTypes;
 	isNullable: boolean;
 	columnDefault: string | null;
 	isPrimaryKey: boolean;

@@ -35,7 +35,8 @@ export const Sheet = ({
 			<aside
 				className={cn(
 					"fixed right-0 top-0 bg-black border-l border-zinc-800 z-50 min-h-dvh",
-					"transition-transform duration-300 ease-out size-[440px] shadow-lg transform-gpu",
+					"transition-transform duration-300 ease-out shadow-lg transform-gpu",
+					"size-[800px]",
 					isOpen ? "translate-x-0" : "translate-x-full",
 					className,
 				)}
@@ -44,7 +45,7 @@ export const Sheet = ({
 					<h2 className="text-sm font-medium">{title}</h2>
 				</div>
 
-				<div className="p-4">{children}</div>
+				{children}
 			</aside>
 		</>
 	);

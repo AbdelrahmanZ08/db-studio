@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { SidebarContent } from "@/components/sidebar/sidebar-content";
 import { usePersonalPreferencesStore } from "@/stores/personal-preferences.store";
 import { cn } from "@/utils/cn";
-import { HOVER_DELAY, HOVER_ZONE } from "@/utils/constans";
+import { HOVER_DELAY, HOVER_ZONE } from "@/utils/constants/constans";
 
 export const Sidebar = () => {
 	const {

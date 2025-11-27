@@ -1,7 +1,7 @@
 import { SidebarToggleButton } from "@/components/sidebar/sidebar-toggle-button";
 import { useActiveTabStore } from "@/stores/active-tab.store";
 import { cn } from "@/utils/cn";
-import { TABS } from "@/utils/constans";
+import { TABS } from "@/utils/constants/constans";
 
 export const Tabs = () => {
 	const { activeTab, setActiveTab } = useActiveTabStore();
