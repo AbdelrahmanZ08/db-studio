@@ -58,12 +58,27 @@ declare module "@tanstack/react-table" {
 		onColumnClick?: (columnId: string) => void;
 		onCellClick?: (rowIndex: number, columnId: string, event?: React.MouseEvent) => void;
 		onCellDoubleClick?: (rowIndex: number, columnId: string) => void;
-		onCellMouseDown?: (rowIndex: number, columnId: string, event: React.MouseEvent) => void;
-		onCellMouseEnter?: (rowIndex: number, columnId: string, event: React.MouseEvent) => void;
+		onCellMouseDown?: (
+			rowIndex: number,
+			columnId: string,
+			event: React.MouseEvent,
+		) => void;
+		onCellMouseEnter?: (
+			rowIndex: number,
+			columnId: string,
+			event: React.MouseEvent,
+		) => void;
 		onCellMouseUp?: () => void;
-		onCellContextMenu?: (rowIndex: number, columnId: string, event: React.MouseEvent) => void;
+		onCellContextMenu?: (
+			rowIndex: number,
+			columnId: string,
+			event: React.MouseEvent,
+		) => void;
 		onCellEditingStart?: (rowIndex: number, columnId: string) => void;
-		onCellEditingStop?: (opts?: { direction?: NavigationDirection; moveToNextRow?: boolean }) => void;
+		onCellEditingStop?: (opts?: {
+			direction?: NavigationDirection;
+			moveToNextRow?: boolean;
+		}) => void;
 		contextMenu?: ContextMenuState;
 		onContextMenuOpenChange?: (open: boolean) => void;
 		onRowSelect?: (rowIndex: number, checked: boolean, shiftKey: boolean) => void;

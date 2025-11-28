@@ -22,7 +22,10 @@ function DialogClose({ ...props }: ComponentProps<typeof DialogPrimitive.Close>)
 	return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
 }
 
-function DialogOverlay({ className, ...props }: ComponentProps<typeof DialogPrimitive.Overlay>) {
+function DialogOverlay({
+	className,
+	...props
+}: ComponentProps<typeof DialogPrimitive.Overlay>) {
 	return (
 		<DialogPrimitive.Overlay
 			data-slot="dialog-overlay"
@@ -89,7 +92,10 @@ function DialogFooter({ className, ...props }: ComponentProps<"div">) {
 	);
 }
 
-function DialogTitle({ className, ...props }: ComponentProps<typeof DialogPrimitive.Title>) {
+function DialogTitle({
+	className,
+	...props
+}: ComponentProps<typeof DialogPrimitive.Title>) {
 	return (
 		<DialogPrimitive.Title
 			data-slot="dialog-title"
@@ -99,7 +105,10 @@ function DialogTitle({ className, ...props }: ComponentProps<typeof DialogPrimit
 	);
 }
 
-function DialogDescription({ className, ...props }: ComponentProps<typeof DialogPrimitive.Description>) {
+function DialogDescription({
+	className,
+	...props
+}: ComponentProps<typeof DialogPrimitive.Description>) {
 	return (
 		<DialogPrimitive.Description
 			data-slot="dialog-description"

@@ -45,7 +45,11 @@ export function DataGridContextMenu<TData>({ table }: DataGridContextMenuProps<T
 interface ContextMenuProps<TData>
 	extends Pick<
 			TableMeta<TData>,
-			"dataGridRef" | "onContextMenuOpenChange" | "selectionState" | "onDataUpdate" | "onRowsDelete"
+			| "dataGridRef"
+			| "onContextMenuOpenChange"
+			| "selectionState"
+			| "onDataUpdate"
+			| "onRowsDelete"
 		>,
 		Required<Pick<TableMeta<TData>, "contextMenu">> {
 	table: Table<TData>;
@@ -90,14 +94,15 @@ function ContextMenuImpl<TData>({
 		[contextMenu.x, contextMenu.y],
 	);
 
-	const onCloseAutoFocus: NonNullable<React.ComponentProps<typeof DropdownMenuContent>["onCloseAutoFocus"]> =
-		React.useCallback(
-			(event) => {
-				event.preventDefault();
-				dataGridRef?.current?.focus();
-			},
-			[dataGridRef],
-		);
+	const onCloseAutoFocus: NonNullable<
+		React.ComponentProps<typeof DropdownMenuContent>["onCloseAutoFocus"]
+	> = React.useCallback(
+		(event) => {
+			event.preventDefault();
+			dataGridRef?.current?.focus();
+		},
+		[dataGridRef],
+	);
 
 	const onCopy = React.useCallback(() => {
 		if (!selectionState?.selectedCells || selectionState.selectedCells.size === 0) return;
@@ -194,7 +199,12 @@ function ContextMenuImpl<TData>({
 	return (
 		<DropdownMenu open={contextMenu.open} onOpenChange={onContextMenuOpenChange}>
 			<DropdownMenuTrigger style={triggerStyle} />
-			<DropdownMenuContent data-grid-popover="" align="start" className="w-48" onCloseAutoFocus={onCloseAutoFocus}>
+			<DropdownMenuContent
+				data-grid-popover=""
+				align="start"
+				className="w-48"
+				onCloseAutoFocus={onCloseAutoFocus}
+			>
 				<DropdownMenuItem onSelect={onCopy}>
 					<CopyIcon />
 					Copy

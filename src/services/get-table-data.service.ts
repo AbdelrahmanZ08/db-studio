@@ -24,7 +24,9 @@ export const getTableData = async (
 	queryParams.set("pageSize", pageSize.toString());
 
 	try {
-		const response = await fetch(`/api/tables/${tableName}/data?${queryParams.toString()}`);
+		const response = await fetch(
+			`/api/tables/${tableName}/data?${queryParams.toString()}`,
+		);
 		if (!response.ok) {
 			throw new Error("Failed to fetch table data");
 		}

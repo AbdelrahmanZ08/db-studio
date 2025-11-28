@@ -28,7 +28,10 @@ export const getTableData = async (
 		const totalPages = Math.ceil(totalRows / pageSize);
 
 		// Get paginated data
-		const dataRes = await client.query(`SELECT * FROM "${tableName}" LIMIT $1 OFFSET $2`, [pageSize, offset]);
+		const dataRes = await client.query(
+			`SELECT * FROM "${tableName}" LIMIT $1 OFFSET $2`,
+			[pageSize, offset],
+		);
 
 		return {
 			data: dataRes.rows,

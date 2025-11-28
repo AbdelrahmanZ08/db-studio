@@ -1,5 +1,9 @@
 import { db } from "../db.js";
-import { type DataTypes, mapPostgresToDataType, standardizeDataTypeLabel } from "../types/column.types.js";
+import {
+	type DataTypes,
+	mapPostgresToDataType,
+	standardizeDataTypeLabel,
+} from "../types/column.types.js";
 
 export interface ColumnInfo {
 	columnName: string;

@@ -296,7 +296,8 @@ function useDataGrid<TData>({
 			if (!rows || rows.length === 0) return;
 
 			const currentState = store.getState();
-			const currentFocusedColumn = currentState.focusedCell?.columnId ?? navigableColumnIds[0];
+			const currentFocusedColumn =
+				currentState.focusedCell?.columnId ?? navigableColumnIds[0];
 
 			const minDeletedRowIndex = Math.min(...rowIndices);
 
@@ -436,7 +437,8 @@ function useDataGrid<TData>({
 					// If target row already exists, check if it's visible
 					if (targetRow) {
 						const rowRect = targetRow.getBoundingClientRect();
-						const isFullyVisible = rowRect.top >= viewportTop && rowRect.bottom <= viewportBottom;
+						const isFullyVisible =
+							rowRect.top >= viewportTop && rowRect.bottom <= viewportBottom;
 
 						if (isFullyVisible) {
 							// Row is fully visible, just focus it
@@ -546,7 +548,9 @@ function useDataGrid<TData>({
 			}
 
 			const currentState = store.getState();
-			const currentMatch = currentState.matchIndex >= 0 && currentState.searchMatches[currentState.matchIndex];
+			const currentMatch =
+				currentState.matchIndex >= 0 &&
+				currentState.searchMatches[currentState.matchIndex];
 
 			store.batch(() => {
 				store.setState("searchOpen", false);
@@ -618,14 +622,19 @@ function useDataGrid<TData>({
 		[columnIds, store],
 	);
 
-	const onSearchQueryChange = useCallback((query: string) => store.setState("searchQuery", query), [store]);
+	const onSearchQueryChange = useCallback(
+		(query: string) => store.setState("searchQuery", query),
+		[store],
+	);
 
 	const onNavigateToPrevMatch = useCallback(() => {
 		const currentState = store.getState();
 		if (currentState.searchMatches.length === 0) return;
 
 		const prevIndex =
-			currentState.matchIndex - 1 < 0 ? currentState.searchMatches.length - 1 : currentState.matchIndex - 1;
+			currentState.matchIndex - 1 < 0
+				? currentState.searchMatches.length - 1
+				: currentState.matchIndex - 1;
 		const match = currentState.searchMatches[prevIndex];
 
 		if (match) {
@@ -665,7 +674,9 @@ function useDataGrid<TData>({
 
 	const getIsSearchMatch = useCallback(
 		(rowIndex: number, columnId: string) => {
-			return searchMatches.some((match) => match.rowIndex === rowIndex && match.columnId === columnId);
+			return searchMatches.some(
+				(match) => match.rowIndex === rowIndex && match.columnId === columnId,
+			);
 		},
 		[searchMatches],
 	);
@@ -738,7 +749,8 @@ function useDataGrid<TData>({
 				// don't clear it - keep the selection
 				// Only clear if clicking elsewhere
 				const cellKey = getCellKey(rowIndex, columnId);
-				const isClickingSelectedCell = currentState.selectionState.selectedCells.has(cellKey);
+				const isClickingSelectedCell =
+					currentState.selectionState.selectedCells.has(cellKey);
 
 				if (!isClickingSelectedCell) {
 					clearSelection();
@@ -752,7 +764,10 @@ function useDataGrid<TData>({
 				clearSelection();
 			}
 
-			if (currentFocused?.rowIndex === rowIndex && currentFocused?.columnId === columnId) {
+			if (
+				currentFocused?.rowIndex === rowIndex &&
+				currentFocused?.columnId === columnId
+			) {
 				onCellEditingStart(rowIndex, columnId);
 			} else {
 				focusCell(rowIndex, columnId);
@@ -801,7 +816,10 @@ function useDataGrid<TData>({
 	const onCellMouseEnter = useCallback(
 		(rowIndex: number, columnId: string) => {
 			const currentState = store.getState();
-			if (currentState.selectionState.isSelecting && currentState.selectionState.selectionRange) {
+			if (
+				currentState.selectionState.isSelecting &&
+				currentState.selectionState.selectionRange
+			) {
 				const start = currentState.selectionState.selectionRange.start;
 				const end = { rowIndex, columnId };
 
@@ -967,7 +985,10 @@ function useDataGrid<TData>({
 					break;
 				case "Escape":
 					event.preventDefault();
-					if (currentState.selectionState.selectedCells.size > 0 || Object.keys(currentState.rowSelection).length > 0) {
+					if (
+						currentState.selectionState.selectedCells.size > 0 ||
+						Object.keys(currentState.rowSelection).length > 0
+					) {
 						clearSelection();
 					} else {
 						blurCell();
@@ -984,7 +1005,9 @@ function useDataGrid<TData>({
 
 				// Tab navigation should not trigger selection, even with Shift
 				if (shiftKey && key !== "Tab" && currentState.focusedCell) {
-					const currentColIndex = navigableColumnIds.indexOf(currentState.focusedCell.columnId);
+					const currentColIndex = navigableColumnIds.indexOf(
+						currentState.focusedCell.columnId,
+					);
 					let newRowIndex = currentState.focusedCell.rowIndex;
 					let newColumnId = currentState.focusedCell.columnId;
 
@@ -1012,7 +1035,8 @@ function useDataGrid<TData>({
 							break;
 					}
 
-					const selectionStart = currentState.selectionState.selectionRange?.start || currentState.focusedCell;
+					const selectionStart =
+						currentState.selectionState.selectionRange?.start || currentState.focusedCell;
 					selectRange(selectionStart, {
 						rowIndex: newRowIndex,
 						columnId: newColumnId,
@@ -1047,7 +1071,8 @@ function useDataGrid<TData>({
 	const onSortingChange = useCallback(
 		(updater: Updater<SortingState>) => {
 			const currentState = store.getState();
-			const newSorting = typeof updater === "function" ? updater(currentState.sorting) : updater;
+			const newSorting =
+				typeof updater === "function" ? updater(currentState.sorting) : updater;
 			store.setState("sorting", newSorting);
 		},
 		[store],
@@ -1056,9 +1081,12 @@ function useDataGrid<TData>({
 	const onRowSelectionChange = useCallback(
 		(updater: Updater<RowSelectionState>) => {
 			const currentState = store.getState();
-			const newRowSelection = typeof updater === "function" ? updater(currentState.rowSelection) : updater;
+			const newRowSelection =
+				typeof updater === "function" ? updater(currentState.rowSelection) : updater;
 
-			const selectedRows = Object.keys(newRowSelection).filter((key) => newRowSelection[key]);
+			const selectedRows = Object.keys(newRowSelection).filter(
+				(key) => newRowSelection[key],
+			);
 
 			const selectedCells = new Set<string>();
 			const rows = tableRef.current?.getRowModel().rows ?? [];
@@ -1326,7 +1354,8 @@ function useDataGrid<TData>({
 			const rows = currentTable?.getRowModel().rows ?? [];
 
 			if (result) {
-				const adjustedRowIndex = (result.rowIndex ?? 0) >= rows.length ? rows.length : result.rowIndex;
+				const adjustedRowIndex =
+					(result.rowIndex ?? 0) >= rows.length ? rows.length : result.rowIndex;
 
 				onScrollToRow({
 					rowIndex: adjustedRowIndex,
@@ -1413,7 +1442,8 @@ function useDataGrid<TData>({
 			if (key === "Escape") {
 				const currentState = store.getState();
 				const hasSelections =
-					currentState.selectionState.selectedCells.size > 0 || Object.keys(currentState.rowSelection).length > 0;
+					currentState.selectionState.selectedCells.size > 0 ||
+					Object.keys(currentState.rowSelection).length > 0;
 
 				if (hasSelections) {
 					event.preventDefault();
@@ -1462,12 +1492,16 @@ function useDataGrid<TData>({
 				const target = event.target;
 				const isInsidePopover =
 					target instanceof HTMLElement &&
-					(target.closest("[data-grid-cell-editor]") || target.closest("[data-grid-popover]"));
+					(target.closest("[data-grid-cell-editor]") ||
+						target.closest("[data-grid-popover]"));
 
 				if (!isInsidePopover) {
 					blurCell();
 					const currentState = store.getState();
-					if (currentState.selectionState.selectedCells.size > 0 || Object.keys(currentState.rowSelection).length > 0) {
+					if (
+						currentState.selectionState.selectedCells.size > 0 ||
+						Object.keys(currentState.rowSelection).length > 0
+					) {
 						clearSelection();
 					}
 				}

@@ -34,11 +34,17 @@ const checkboxIconVariants = cva("", {
 	},
 });
 
-interface CheckboxProps extends ComponentProps<typeof CheckboxPrimitive.Root>, VariantProps<typeof checkboxVariants> {}
+interface CheckboxProps
+	extends ComponentProps<typeof CheckboxPrimitive.Root>,
+		VariantProps<typeof checkboxVariants> {}
 
 function Checkbox({ className, size, ...props }: CheckboxProps) {
 	return (
-		<CheckboxPrimitive.Root data-slot="checkbox" className={cn(checkboxVariants({ size, className }))} {...props}>
+		<CheckboxPrimitive.Root
+			data-slot="checkbox"
+			className={cn(checkboxVariants({ size, className }))}
+			{...props}
+		>
 			<CheckboxPrimitive.Indicator
 				data-slot="checkbox-indicator"
 				className="grid place-content-center text-current transition-none"

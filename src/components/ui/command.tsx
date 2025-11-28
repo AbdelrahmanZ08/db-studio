@@ -3,13 +3,22 @@
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
 import type * as React from "react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
 import { cn } from "@/utils/cn";
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {
 	return (
 		<CommandPrimitive
-			className={cn("flex size-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground", className)}
+			className={cn(
+				"flex size-full flex-col overflow-hidden rounded-md bg-popover text-popover-foreground",
+				className,
+			)}
 			data-slot="command"
 			{...props}
 		/>
@@ -40,7 +49,10 @@ function CommandDialog({
 	);
 }
 
-function CommandInput({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) {
+function CommandInput({
+	className,
+	...props
+}: React.ComponentProps<typeof CommandPrimitive.Input>) {
 	return (
 		<div className="flex items-center border-input border-b px-5" cmdk-input-wrapper="">
 			<SearchIcon className="me-3 text-muted-foreground/80" size={20} />
@@ -56,7 +68,10 @@ function CommandInput({ className, ...props }: React.ComponentProps<typeof Comma
 	);
 }
 
-function CommandList({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.List>) {
+function CommandList({
+	className,
+	...props
+}: React.ComponentProps<typeof CommandPrimitive.List>) {
 	return (
 		<CommandPrimitive.List
 			className={cn("max-h-80 flex-1 overflow-y-auto overflow-x-hidden", className)}
@@ -67,10 +82,19 @@ function CommandList({ className, ...props }: React.ComponentProps<typeof Comman
 }
 
 function CommandEmpty({ ...props }: React.ComponentProps<typeof CommandPrimitive.Empty>) {
-	return <CommandPrimitive.Empty className="py-6 text-center text-sm" data-slot="command-empty" {...props} />;
+	return (
+		<CommandPrimitive.Empty
+			className="py-6 text-center text-sm"
+			data-slot="command-empty"
+			{...props}
+		/>
+	);
 }
 
-function CommandGroup({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Group>) {
+function CommandGroup({
+	className,
+	...props
+}: React.ComponentProps<typeof CommandPrimitive.Group>) {
 	return (
 		<CommandPrimitive.Group
 			className={cn(
@@ -83,7 +107,10 @@ function CommandGroup({ className, ...props }: React.ComponentProps<typeof Comma
 	);
 }
 
-function CommandSeparator({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Separator>) {
+function CommandSeparator({
+	className,
+	...props
+}: React.ComponentProps<typeof CommandPrimitive.Separator>) {
 	return (
 		<CommandPrimitive.Separator
 			className={cn("-mx-1 h-px bg-border", className)}
@@ -93,7 +120,10 @@ function CommandSeparator({ className, ...props }: React.ComponentProps<typeof C
 	);
 }
 
-function CommandItem({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Item>) {
+function CommandItem({
+	className,
+	...props
+}: React.ComponentProps<typeof CommandPrimitive.Item>) {
 	return (
 		<CommandPrimitive.Item
 			className={cn(

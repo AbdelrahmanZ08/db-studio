@@ -78,7 +78,9 @@ function DataGridRowImpl<TData>({
 			{...props}
 		>
 			{row.getVisibleCells().map((cell, colIndex) => {
-				const isCellFocused = focusedCell?.rowIndex === virtualRowIndex && focusedCell?.columnId === cell.column.id;
+				const isCellFocused =
+					focusedCell?.rowIndex === virtualRowIndex &&
+					focusedCell?.columnId === cell.column.id;
 
 				return (
 					<div

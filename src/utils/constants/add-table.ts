@@ -5,24 +5,58 @@ export const PSQL_TYPES = {
 		{ value: "int2", label: "int2", description: "Signed two-byte integer" },
 		{ value: "int4", label: "int4", description: "Signed four-byte integer" },
 		{ value: "int8", label: "int8", description: "Signed eight-byte integer" },
-		{ value: "float4", label: "float4", description: "Single precision floating-point number (4 bytes)" },
-		{ value: "float8", label: "float8", description: "Double precision floating-point number (8 bytes)" },
-		{ value: "numeric", label: "numeric", description: "Exact numeric of selectable precision" },
-		{ value: "serial", label: "serial", description: "Auto-incrementing four-byte integer" },
-		{ value: "bigserial", label: "bigserial", description: "Auto-incrementing eight-byte integer" },
+		{
+			value: "float4",
+			label: "float4",
+			description: "Single precision floating-point number (4 bytes)",
+		},
+		{
+			value: "float8",
+			label: "float8",
+			description: "Double precision floating-point number (8 bytes)",
+		},
+		{
+			value: "numeric",
+			label: "numeric",
+			description: "Exact numeric of selectable precision",
+		},
+		{
+			value: "serial",
+			label: "serial",
+			description: "Auto-incrementing four-byte integer",
+		},
+		{
+			value: "bigserial",
+			label: "bigserial",
+			description: "Auto-incrementing eight-byte integer",
+		},
 	],
 	text: [
 		{ value: "text", label: "text", description: "Variable-length character string" },
-		{ value: "varchar", label: "varchar", description: "Variable-length character string" },
+		{
+			value: "varchar",
+			label: "varchar",
+			description: "Variable-length character string",
+		},
 		{ value: "char", label: "char", description: "Fixed-length character string" },
 		{ value: "uuid", label: "uuid", description: "Universally unique identifier" },
 	],
-	boolean: [{ value: "boolean", label: "boolean", description: "Logical boolean (true/false)" }],
+	boolean: [
+		{ value: "boolean", label: "boolean", description: "Logical boolean (true/false)" },
+	],
 	datetime: [
 		{ value: "date", label: "date", description: "Calendar date (year, month, day)" },
 		{ value: "time", label: "time", description: "Time of day (no time zone)" },
-		{ value: "timestamp", label: "timestamp", description: "Date and time (no time zone)" },
-		{ value: "timestamptz", label: "timestamptz", description: "Date and time with time zone" },
+		{
+			value: "timestamp",
+			label: "timestamp",
+			description: "Date and time (no time zone)",
+		},
+		{
+			value: "timestamptz",
+			label: "timestamptz",
+			description: "Date and time with time zone",
+		},
 		{ value: "interval", label: "interval", description: "Time span" },
 	],
 	json: [
@@ -33,13 +67,21 @@ export const PSQL_TYPES = {
 	network: [
 		{ value: "inet", label: "inet", description: "IPv4 or IPv6 host address" },
 		{ value: "cidr", label: "cidr", description: "IPv4 or IPv6 network address" },
-		{ value: "macaddr", label: "macaddr", description: "MAC (Media Access Control) address" },
+		{
+			value: "macaddr",
+			label: "macaddr",
+			description: "MAC (Media Access Control) address",
+		},
 		{ value: "macaddr8", label: "macaddr8", description: "MAC address (EUI-64 format)" },
 	],
 	geometric: [
 		{ value: "point", label: "point", description: "Geometric point on a plane" },
 		{ value: "line", label: "line", description: "Infinite line on a plane" },
-		{ value: "polygon", label: "polygon", description: "Closed geometric path on a plane" },
+		{
+			value: "polygon",
+			label: "polygon",
+			description: "Closed geometric path on a plane",
+		},
 	],
 	other: [{ value: "xml", label: "xml", description: "XML data" }],
 };

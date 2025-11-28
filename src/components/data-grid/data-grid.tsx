@@ -9,7 +9,9 @@ import { DataGridSearch } from "@/components/data-grid/data-grid-search";
 import type { useDataGrid } from "@/hooks/use-data-grid";
 import { cn } from "@/utils/cn";
 
-interface DataGridProps<TData> extends ReturnType<typeof useDataGrid<TData>>, ComponentProps<"div"> {}
+interface DataGridProps<TData>
+	extends ReturnType<typeof useDataGrid<TData>>,
+		ComponentProps<"div"> {}
 
 export function DataGrid<TData>({
 	dataGridRef,
@@ -96,7 +98,8 @@ export function DataGrid<TData>({
 											width: `calc(var(--header-${header.id}-size) * 1px)`,
 										}}
 									>
-										{header.isPlaceholder ? null : typeof header.column.columnDef.header === "function" ? (
+										{header.isPlaceholder ? null : typeof header.column.columnDef
+												.header === "function" ? (
 											<div className="px-3 py-1.5">
 												{flexRender(header.column.columnDef.header, header.getContext())}
 											</div>

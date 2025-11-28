@@ -2,7 +2,12 @@
 
 import type { Cell, Table } from "@tanstack/react-table";
 
-import { LongTextCell, NumberCell, SelectCell, ShortTextCell } from "@/components/data-grid/data-grid-cell-variants";
+import {
+	LongTextCell,
+	NumberCell,
+	SelectCell,
+	ShortTextCell,
+} from "@/components/data-grid/data-grid-cell-variants";
 
 interface DataGridCellProps<TData> {
 	cell: Cell<TData, unknown>;
@@ -18,8 +23,10 @@ export function DataGridCell<TData>({ cell, table }: DataGridCellProps<TData>) {
 	const rowIndex = displayRowIndex >= 0 ? displayRowIndex : originalRowIndex;
 	const columnId = cell.column.id;
 
-	const isFocused = meta?.focusedCell?.rowIndex === rowIndex && meta?.focusedCell?.columnId === columnId;
-	const isEditing = meta?.editingCell?.rowIndex === rowIndex && meta?.editingCell?.columnId === columnId;
+	const isFocused =
+		meta?.focusedCell?.rowIndex === rowIndex && meta?.focusedCell?.columnId === columnId;
+	const isEditing =
+		meta?.editingCell?.rowIndex === rowIndex && meta?.editingCell?.columnId === columnId;
 	const isSelected = meta?.getIsCellSelected?.(rowIndex, columnId) ?? false;
 
 	const cellOpts = cell.column.columnDef.meta?.cell;

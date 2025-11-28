@@ -16,7 +16,10 @@ export const SidebarSearch = ({
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			// Focus search on "/" key press (unless already focused on an input)
-			if (e.key === "/" && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
+			if (
+				e.key === "/" &&
+				!(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)
+			) {
 				e.preventDefault();
 				searchInputRef.current?.focus();
 			}

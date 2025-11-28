@@ -4,7 +4,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 const SEARCH_PARAMS_CHANGE_EVENT = "searchParamsChange";
 
 export function useSearchParamsUtils() {
-	const [searchParams, setSearchParamsState] = useState(() => new URLSearchParams(window.location.search));
+	const [searchParams, setSearchParamsState] = useState(
+		() => new URLSearchParams(window.location.search),
+	);
 
 	// Sync with browser history changes and custom events
 	useEffect(() => {
@@ -27,7 +29,10 @@ export function useSearchParamsUtils() {
 
 	// Helper to update URL and state
 	const setSearchParams = useCallback(
-		(updater: URLSearchParams | ((prev: URLSearchParams) => URLSearchParams), options?: { replace?: boolean }) => {
+		(
+			updater: URLSearchParams | ((prev: URLSearchParams) => URLSearchParams),
+			options?: { replace?: boolean },
+		) => {
 			const newParams = typeof updater === "function" ? updater(searchParams) : updater;
 			const newUrl = `${window.location.pathname}${newParams.toString() ? `?${newParams.toString()}` : ""}`;
 
@@ -78,7 +83,10 @@ export function useSearchParamsUtils() {
 
 	// Set multiple params at once (optimal for batch updates)
 	const setParams = useCallback(
-		(params: Record<string, string | number | boolean | null | undefined>, replace = false) => {
+		(
+			params: Record<string, string | number | boolean | null | undefined>,
+			replace = false,
+		) => {
 			setSearchParams(
 				(prev) => {
 					const next = new URLSearchParams(prev);

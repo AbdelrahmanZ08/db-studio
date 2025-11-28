@@ -1,11 +1,22 @@
-import { ChevronFirstIcon, ChevronLastIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import {
+	ChevronFirstIcon,
+	ChevronLastIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
+} from "lucide-react";
 import { useTableData } from "@/hooks/use-table-data";
 import { useActiveTableStore } from "@/stores/active-table.store";
 import { useSearchParamsUtils } from "@/utils/search-params";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Pagination, PaginationContent, PaginationItem } from "../ui/pagination";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "../ui/select";
 
 export const TableFooter = () => {
 	const { setParams, setParam, getParamAsNumber } = useSearchParamsUtils();
@@ -56,7 +67,8 @@ export const TableFooter = () => {
 			<div className="flex items-center justify-center text-xs text-zinc-400">
 				<p className="whitespace-nowrap" aria-live="polite">
 					<span className="text-zinc-200">
-						{(currentPage - 1) * pageSize + 1}-{Math.min(currentPage * pageSize, totalRows)}
+						{(currentPage - 1) * pageSize + 1}-
+						{Math.min(currentPage * pageSize, totalRows)}
 					</span>{" "}
 					of <span className="text-zinc-200">{totalRows.toString()}</span>
 				</p>

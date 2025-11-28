@@ -15,7 +15,13 @@ import {
 import { DataGridCellWrapper } from "@/components/data-grid/data-grid-cell-wrapper";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Popover, PopoverAnchor, PopoverContent } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
 import { cn } from "@/utils/cn";
@@ -83,7 +89,12 @@ export function ShortTextCell<TData>({
 					setValue(initialValue);
 					cellRef.current?.blur();
 				}
-			} else if (isFocused && event.key.length === 1 && !event.ctrlKey && !event.metaKey) {
+			} else if (
+				isFocused &&
+				event.key.length === 1 &&
+				!event.ctrlKey &&
+				!event.metaKey
+			) {
 				// Handle typing to pre-fill the value when editing starts
 				setValue(event.key);
 
@@ -128,7 +139,13 @@ export function ShortTextCell<TData>({
 			}
 		}
 		// Don't focus if we're in the middle of a scroll operation
-		if (isFocused && !isEditing && !meta?.searchOpen && !meta?.isScrolling && containerRef.current) {
+		if (
+			isFocused &&
+			!isEditing &&
+			!meta?.searchOpen &&
+			!meta?.isScrolling &&
+			containerRef.current
+		) {
 			containerRef.current.focus();
 		}
 	}, [isFocused, isEditing, value, meta?.searchOpen, meta?.isScrolling]);
@@ -157,7 +174,8 @@ export function ShortTextCell<TData>({
 				onInput={onInput}
 				suppressContentEditableWarning
 				className={cn("size-full overflow-hidden outline-none", {
-					"whitespace-nowrap [&_*]:inline [&_*]:whitespace-nowrap [&_br]:hidden": isEditing,
+					"whitespace-nowrap [&_*]:inline [&_*]:whitespace-nowrap [&_br]:hidden":
+						isEditing,
 				})}
 			>
 				{displayValue}
@@ -235,17 +253,16 @@ export function LongTextCell<TData>({
 		[meta, value, initialValue, rowIndex, columnId],
 	);
 
-	const onOpenAutoFocus: NonNullable<ComponentProps<typeof PopoverContent>["onOpenAutoFocus"]> = useCallback(
-		(event) => {
-			event.preventDefault();
-			if (textareaRef.current) {
-				textareaRef.current.focus();
-				const length = textareaRef.current.value.length;
-				textareaRef.current.setSelectionRange(length, length);
-			}
-		},
-		[],
-	);
+	const onOpenAutoFocus: NonNullable<
+		ComponentProps<typeof PopoverContent>["onOpenAutoFocus"]
+	> = useCallback((event) => {
+		event.preventDefault();
+		if (textareaRef.current) {
+			textareaRef.current.focus();
+			const length = textareaRef.current.value.length;
+			textareaRef.current.setSelectionRange(length, length);
+		}
+	}, []);
 
 	const onWrapperKeyDown = useCallback(
 		(event: KeyboardEvent<HTMLDivElement>) => {
@@ -296,7 +313,13 @@ export function LongTextCell<TData>({
 		if (isEditing && !open) {
 			setOpen(true);
 		}
-		if (isFocused && !isEditing && !meta?.searchOpen && !meta?.isScrolling && containerRef.current) {
+		if (
+			isFocused &&
+			!isEditing &&
+			!meta?.searchOpen &&
+			!meta?.isScrolling &&
+			containerRef.current
+		) {
 			containerRef.current.focus();
 		}
 	}, [isFocused, isEditing, open, meta?.searchOpen, meta?.isScrolling]);
@@ -413,7 +436,13 @@ export function NumberCell<TData>({
 			inputRef.current.focus();
 			inputRef.current.select();
 		}
-		if (isFocused && !isEditing && !meta?.searchOpen && !meta?.isScrolling && containerRef.current) {
+		if (
+			isFocused &&
+			!isEditing &&
+			!meta?.searchOpen &&
+			!meta?.isScrolling &&
+			containerRef.current
+		) {
 			containerRef.current.focus();
 		}
 	}, [isFocused, isEditing, meta?.searchOpen, meta?.isScrolling]);
@@ -510,7 +539,13 @@ export function SelectCell<TData>({
 		if (isEditing && !open) {
 			setOpen(true);
 		}
-		if (isFocused && !isEditing && !meta?.searchOpen && !meta?.isScrolling && containerRef.current) {
+		if (
+			isFocused &&
+			!isEditing &&
+			!meta?.searchOpen &&
+			!meta?.isScrolling &&
+			containerRef.current
+		) {
 			containerRef.current.focus();
 		}
 	}, [isFocused, isEditing, open, meta?.searchOpen, meta?.isScrolling]);
@@ -530,7 +565,12 @@ export function SelectCell<TData>({
 			onKeyDown={onWrapperKeyDown}
 		>
 			{isEditing ? (
-				<Select value={value} onValueChange={onValueChange} open={open} onOpenChange={onOpenChange}>
+				<Select
+					value={value}
+					onValueChange={onValueChange}
+					open={open}
+					onOpenChange={onOpenChange}
+				>
 					<SelectTrigger
 						size="sm"
 						className="size-full items-start border-none p-0 shadow-none focus-visible:ring-0 dark:bg-transparent [&_svg]:hidden"

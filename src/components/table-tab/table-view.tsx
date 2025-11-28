@@ -51,7 +51,8 @@ export const TableView = () => {
 		},
 		onPaginationChange: (updater) => {
 			const currentPagination = { pageIndex: page - 1, pageSize };
-			const newPagination = typeof updater === "function" ? updater(currentPagination) : updater;
+			const newPagination =
+				typeof updater === "function" ? updater(currentPagination) : updater;
 			setParams(
 				{
 					page: newPagination.pageIndex + 1,

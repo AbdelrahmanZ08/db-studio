@@ -12,23 +12,35 @@ export const TablesList = ({ searchTerm }: { searchTerm: string }) => {
 		if (!searchTerm.trim()) return tablesList;
 
 		const lowerSearchTerm = searchTerm.toLowerCase();
-		return tablesList.filter((table) => table.tableName.toLowerCase().includes(lowerSearchTerm));
+		return tablesList.filter((table) =>
+			table.tableName.toLowerCase().includes(lowerSearchTerm),
+		);
 	}, [tablesList, searchTerm]);
 
 	return (
 		<div className="flex-1 overflow-y-auto py-3">
 			{isLoadingTables ? (
-				<div className="px-4 py-8 text-center text-sm text-zinc-500">Loading tables...</div>
+				<div className="px-4 py-8 text-center text-sm text-zinc-500">
+					Loading tables...
+				</div>
 			) : filteredTables.length > 0 ? (
 				<ul>
 					{filteredTables.map((table) => (
-						<SidebarListItem key={table.tableName} tableName={table.tableName} rowCount={table.rowCount} />
+						<SidebarListItem
+							key={table.tableName}
+							tableName={table.tableName}
+							rowCount={table.rowCount}
+						/>
 					))}
 				</ul>
 			) : searchTerm ? (
-				<div className="px-4 py-8 text-center text-sm text-zinc-500">No tables found matching</div>
+				<div className="px-4 py-8 text-center text-sm text-zinc-500">
+					No tables found matching
+				</div>
 			) : (
-				<div className="px-4 py-8 text-center text-sm text-zinc-500">No tables available</div>
+				<div className="px-4 py-8 text-center text-sm text-zinc-500">
+					No tables available
+				</div>
 			)}
 		</div>
 	);

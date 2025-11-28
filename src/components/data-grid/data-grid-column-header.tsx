@@ -1,7 +1,21 @@
 "use client";
 
-import type { ColumnSort, Header, SortDirection, SortingState, Table } from "@tanstack/react-table";
-import { ChevronDownIcon, ChevronUpIcon, EyeOffIcon, KeyIcon, PinIcon, PinOffIcon, XIcon } from "lucide-react";
+import type {
+	ColumnSort,
+	Header,
+	SortDirection,
+	SortingState,
+	Table,
+} from "@tanstack/react-table";
+import {
+	ChevronDownIcon,
+	ChevronUpIcon,
+	EyeOffIcon,
+	KeyIcon,
+	PinIcon,
+	PinOffIcon,
+	XIcon,
+} from "lucide-react";
 import { type ComponentProps, memo, type PointerEvent, useCallback } from "react";
 import {
 	DropdownMenu,
@@ -13,7 +27,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/utils/cn";
 
-interface DataGridColumnHeaderProps<TData, TValue> extends ComponentProps<typeof DropdownMenuTrigger> {
+interface DataGridColumnHeaderProps<TData, TValue>
+	extends ComponentProps<typeof DropdownMenuTrigger> {
 	header: Header<TData, TValue>;
 	table: Table<TData>;
 }
@@ -62,7 +77,9 @@ export function DataGridColumnHeader<TData, TValue>({
 	);
 
 	const onSortRemove = useCallback(() => {
-		table.setSorting((prev: SortingState) => prev.filter((sort) => sort.id !== column.id));
+		table.setSorting((prev: SortingState) =>
+			prev.filter((sort) => sort.id !== column.id),
+		);
 	}, [column.id, table]);
 
 	const onLeftPin = useCallback(() => {
@@ -104,7 +121,9 @@ export function DataGridColumnHeader<TData, TValue>({
 				>
 					<div className="flex min-w-0 flex-1 items-center justify-between gap-1 overflow-hidden">
 						<div className="flex items-center gap-1">
-							{isPrimaryKey && <KeyIcon className="size-3	shrink-0 text-muted-foreground" />}
+							{isPrimaryKey && (
+								<KeyIcon className="size-3	shrink-0 text-muted-foreground" />
+							)}
 							<span className="truncate">{label}</span>
 						</div>
 						<span className="text-muted-foreground text-xs">{dataTypeLabel}</span>
@@ -143,23 +162,35 @@ export function DataGridColumnHeader<TData, TValue>({
 							{column.getCanSort() && <DropdownMenuSeparator />}
 
 							{isPinnedLeft ? (
-								<DropdownMenuItem className="[&_svg]:text-muted-foreground" onClick={onUnpin}>
+								<DropdownMenuItem
+									className="[&_svg]:text-muted-foreground"
+									onClick={onUnpin}
+								>
 									<PinOffIcon />
 									Unpin from left
 								</DropdownMenuItem>
 							) : (
-								<DropdownMenuItem className="[&_svg]:text-muted-foreground" onClick={onLeftPin}>
+								<DropdownMenuItem
+									className="[&_svg]:text-muted-foreground"
+									onClick={onLeftPin}
+								>
 									<PinIcon />
 									Pin to left
 								</DropdownMenuItem>
 							)}
 							{isPinnedRight ? (
-								<DropdownMenuItem className="[&_svg]:text-muted-foreground" onClick={onUnpin}>
+								<DropdownMenuItem
+									className="[&_svg]:text-muted-foreground"
+									onClick={onUnpin}
+								>
 									<PinOffIcon />
 									Unpin from right
 								</DropdownMenuItem>
 							) : (
-								<DropdownMenuItem className="[&_svg]:text-muted-foreground" onClick={onRightPin}>
+								<DropdownMenuItem
+									className="[&_svg]:text-muted-foreground"
+									onClick={onRightPin}
+								>
 									<PinIcon />
 									Pin to right
 								</DropdownMenuItem>
@@ -181,7 +212,9 @@ export function DataGridColumnHeader<TData, TValue>({
 					)}
 				</DropdownMenuContent>
 			</DropdownMenu>
-			{header.column.getCanResize() && <DataGridColumnResizer header={header} table={table} label={label} />}
+			{header.column.getCanResize() && (
+				<DataGridColumnResizer header={header} table={table} label={label} />
+			)}
 		</>
 	);
 }
@@ -190,7 +223,10 @@ const DataGridColumnResizer = memo(DataGridColumnResizerImpl, (prev, next) => {
 	const prevColumn = prev.header.column;
 	const nextColumn = next.header.column;
 
-	if (prevColumn.getIsResizing() !== nextColumn.getIsResizing() || prevColumn.getSize() !== nextColumn.getSize()) {
+	if (
+		prevColumn.getIsResizing() !== nextColumn.getIsResizing() ||
+		prevColumn.getSize() !== nextColumn.getSize()
+	) {
 		return false;
 	}
 
@@ -199,11 +235,16 @@ const DataGridColumnResizer = memo(DataGridColumnResizerImpl, (prev, next) => {
 	return true;
 }) as typeof DataGridColumnResizerImpl;
 
-interface DataGridColumnResizerProps<TData, TValue> extends DataGridColumnHeaderProps<TData, TValue> {
+interface DataGridColumnResizerProps<TData, TValue>
+	extends DataGridColumnHeaderProps<TData, TValue> {
 	label: string;
 }
 
-function DataGridColumnResizerImpl<TData, TValue>({ header, table, label }: DataGridColumnResizerProps<TData, TValue>) {
+function DataGridColumnResizerImpl<TData, TValue>({
+	header,
+	table,
+	label,
+}: DataGridColumnResizerProps<TData, TValue>) {
 	const defaultColumnDef = table._getDefaultColumnDef();
 
 	const onDoubleClick = useCallback(() => {

@@ -26,7 +26,10 @@ export const DataGridSearch = React.memo(DataGridSearchImpl, (prev, next) => {
 
 		if (!prevMatch || !nextMatch) return false;
 
-		if (prevMatch.rowIndex !== nextMatch.rowIndex || prevMatch.columnId !== nextMatch.columnId) {
+		if (
+			prevMatch.rowIndex !== nextMatch.rowIndex ||
+			prevMatch.columnId !== nextMatch.columnId
+		) {
 			return false;
 		}
 	}
@@ -98,25 +101,28 @@ function DataGridSearchImpl({
 		[onSearchQueryChange, debouncedSearch],
 	);
 
-	const onTriggerPointerDown = React.useCallback((event: React.PointerEvent<HTMLButtonElement>) => {
-		// prevent implicit pointer capture
-		const target = event.target;
-		if (!(target instanceof HTMLElement)) return;
-		if (target.hasPointerCapture(event.pointerId)) {
-			target.releasePointerCapture(event.pointerId);
-		}
+	const onTriggerPointerDown = React.useCallback(
+		(event: React.PointerEvent<HTMLButtonElement>) => {
+			// prevent implicit pointer capture
+			const target = event.target;
+			if (!(target instanceof HTMLElement)) return;
+			if (target.hasPointerCapture(event.pointerId)) {
+				target.releasePointerCapture(event.pointerId);
+			}
 
-		// Only prevent default if we're not clicking on the input
-		// This allows text selection in the input while still preventing focus stealing elsewhere
-		if (
-			event.button === 0 &&
-			event.ctrlKey === false &&
-			event.pointerType === "mouse" &&
-			!(event.target instanceof HTMLInputElement)
-		) {
-			event.preventDefault();
-		}
-	}, []);
+			// Only prevent default if we're not clicking on the input
+			// This allows text selection in the input while still preventing focus stealing elsewhere
+			if (
+				event.button === 0 &&
+				event.ctrlKey === false &&
+				event.pointerType === "mouse" &&
+				!(event.target instanceof HTMLInputElement)
+			) {
+				event.preventDefault();
+			}
+		},
+		[],
+	);
 
 	const onPrevMatchPointerDown = React.useCallback(
 		(event: React.PointerEvent<HTMLButtonElement>) => onTriggerPointerDown(event),
@@ -176,7 +182,13 @@ function DataGridSearchImpl({
 					>
 						<ChevronDown />
 					</Button>
-					<Button aria-label="Close search" variant="ghost" size="icon" className="size-7" onClick={onClose}>
+					<Button
+						aria-label="Close search"
+						variant="ghost"
+						size="icon"
+						className="size-7"
+						onClick={onClose}
+					>
 						<X />
 					</Button>
 				</div>

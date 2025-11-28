@@ -4,7 +4,11 @@ import { TableView } from "./table-view";
 export const TableTab = () => {
 	const { activeTable } = useActiveTableStore();
 	if (!activeTable) {
-		return <main className="flex-1 flex items-center justify-center">Select a table to view</main>;
+		return (
+			<main className="flex-1 flex items-center justify-center">
+				Select a table to view
+			</main>
+		);
 	}
 
 	return (

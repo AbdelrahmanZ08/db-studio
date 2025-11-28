@@ -1,7 +1,13 @@
 import { useActiveTableStore } from "@/stores/active-table.store";
 import { cn } from "@/utils/cn";
 
-export const SidebarListItem = ({ tableName, rowCount }: { tableName: string; rowCount: number }) => {
+export const SidebarListItem = ({
+	tableName,
+	rowCount,
+}: {
+	tableName: string;
+	rowCount: number;
+}) => {
 	const { activeTable, setActiveTable } = useActiveTableStore();
 
 	return (
@@ -15,9 +21,13 @@ export const SidebarListItem = ({ tableName, rowCount }: { tableName: string; ro
 					activeTable === tableName ? "text-white bg-zinc-800/50" : "text-zinc-400",
 				)}
 			>
-				{activeTable === tableName && <span className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500" />}
+				{activeTable === tableName && (
+					<span className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500" />
+				)}
 				<span className="flex-1">{tableName}</span>
-				<span className="text-xs font-medium text-zinc-200 bg-zinc-700/60 px-1.5 py-0.5 rounded">{rowCount}</span>
+				<span className="text-xs font-medium text-zinc-200 bg-zinc-700/60 px-1.5 py-0.5 rounded">
+					{rowCount}
+				</span>
 			</button>
 		</li>
 	);

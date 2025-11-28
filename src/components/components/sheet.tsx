@@ -36,7 +36,7 @@ export const Sheet = ({
 				className={cn(
 					"fixed right-0 top-0 bg-black border-l border-zinc-800 z-50 min-h-dvh",
 					"transition-transform duration-300 ease-out shadow-lg transform-gpu",
-					"size-[800px]",
+					"size-[700px]",
 					isOpen ? "translate-x-0" : "translate-x-full",
 					className,
 				)}

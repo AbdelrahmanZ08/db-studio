@@ -29,16 +29,24 @@ interface DataGridKeyboardShortcutsProps {
 	enableSearch?: boolean;
 }
 
-export const DataGridKeyboardShortcuts = React.memo(DataGridKeyboardShortcutsImpl, (prev, next) => {
-	return prev.enableSearch === next.enableSearch;
-});
+export const DataGridKeyboardShortcuts = React.memo(
+	DataGridKeyboardShortcutsImpl,
+	(prev, next) => {
+		return prev.enableSearch === next.enableSearch;
+	},
+);
 
-function DataGridKeyboardShortcutsImpl({ enableSearch = false }: DataGridKeyboardShortcutsProps) {
+function DataGridKeyboardShortcutsImpl({
+	enableSearch = false,
+}: DataGridKeyboardShortcutsProps) {
 	const [open, setOpen] = React.useState(false);
 	const [input, setInput] = React.useState("");
 	const inputRef = React.useRef<HTMLInputElement>(null);
 
-	const isMac = typeof navigator !== "undefined" ? /Mac|iPhone|iPad|iPod/.test(navigator.userAgent) : false;
+	const isMac =
+		typeof navigator !== "undefined"
+			? /Mac|iPhone|iPad|iPod/.test(navigator.userAgent)
+			: false;
 
 	const modKey = isMac ? "⌘" : "Ctrl";
 
@@ -54,9 +62,12 @@ function DataGridKeyboardShortcutsImpl({ enableSearch = false }: DataGridKeyboar
 		inputRef.current?.focus();
 	}, []);
 
-	const onInputChange = React.useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-		setInput(event.target.value);
-	}, []);
+	const onInputChange = React.useCallback(
+		(event: React.ChangeEvent<HTMLInputElement>) => {
+			setInput(event.target.value);
+		},
+		[],
+	);
 
 	const shortcutGroups: ShortcutGroup[] = React.useMemo(
 		() => [
@@ -234,7 +245,11 @@ function DataGridKeyboardShortcutsImpl({ enableSearch = false }: DataGridKeyboar
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-2xl px-0" onOpenAutoFocus={onOpenAutoFocus} showCloseButton={false}>
+			<DialogContent
+				className="max-w-2xl px-0"
+				onOpenAutoFocus={onOpenAutoFocus}
+				showCloseButton={false}
+			>
 				<DialogClose className="absolute top-6 right-6" asChild>
 					<Button variant="ghost" size="icon" className="size-6">
 						<XIcon />
@@ -243,7 +258,8 @@ function DataGridKeyboardShortcutsImpl({ enableSearch = false }: DataGridKeyboar
 				<DialogHeader className="px-6">
 					<DialogTitle>Keyboard shortcuts</DialogTitle>
 					<DialogDescription className="sr-only">
-						Use these keyboard shortcuts to navigate and interact with the data grid more efficiently.
+						Use these keyboard shortcuts to navigate and interact with the data grid more
+						efficiently.
 					</DialogDescription>
 				</DialogHeader>
 				<div className="px-6">
@@ -266,18 +282,28 @@ function DataGridKeyboardShortcutsImpl({ enableSearch = false }: DataGridKeyboar
 								<SearchIcon className="pointer-events-none size-6" />
 							</div>
 							<div className="flex flex-col gap-1">
-								<div className="font-medium text-lg tracking-tight">No shortcuts found</div>
-								<p className="text-muted-foreground text-sm">Try searching for a different term.</p>
+								<div className="font-medium text-lg tracking-tight">
+									No shortcuts found
+								</div>
+								<p className="text-muted-foreground text-sm">
+									Try searching for a different term.
+								</p>
 							</div>
 						</div>
 					) : (
 						<div className="flex flex-col gap-6">
 							{filteredGroups.map((shortcutGroup) => (
 								<div key={shortcutGroup.title} className="flex flex-col gap-2">
-									<h3 className="font-semibold text-foreground text-sm">{shortcutGroup.title}</h3>
+									<h3 className="font-semibold text-foreground text-sm">
+										{shortcutGroup.title}
+									</h3>
 									<div className="divide-y divide-border rounded-md border">
 										{shortcutGroup.shortcuts.map((shortcut, index) => (
-											<ShortcutCard key={index} keys={shortcut.keys} description={shortcut.description} />
+											<ShortcutCard
+												key={index}
+												keys={shortcut.keys}
+												description={shortcut.description}
+											/>
 										))}
 									</div>
 								</div>

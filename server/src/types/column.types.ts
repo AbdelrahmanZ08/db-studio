@@ -71,7 +71,12 @@ export function mapPostgresToDataType(pgType: string): DataTypes {
 	}
 
 	// Enum types and long text types
-	if (normalized.startsWith("user-defined") || normalized === "enum" || normalized === "text" || normalized === "xml") {
+	if (
+		normalized.startsWith("user-defined") ||
+		normalized === "enum" ||
+		normalized === "text" ||
+		normalized === "xml"
+	) {
 		return DataTypes.long;
 	}
 
@@ -120,7 +125,12 @@ export function standardizeDataTypeLabel(pgType: string): string {
 		return "int";
 	}
 
-	if (normalized === "bigint" || normalized === "int8" || normalized === "bigserial" || normalized === "serial8") {
+	if (
+		normalized === "bigint" ||
+		normalized === "int8" ||
+		normalized === "bigserial" ||
+		normalized === "serial8"
+	) {
 		return "bigint";
 	}
 
@@ -141,7 +151,11 @@ export function standardizeDataTypeLabel(pgType: string): string {
 		return "float";
 	}
 
-	if (normalized === "double precision" || normalized === "float8" || normalized === "float") {
+	if (
+		normalized === "double precision" ||
+		normalized === "float8" ||
+		normalized === "float"
+	) {
 		return "double";
 	}
 
@@ -199,7 +213,11 @@ export function standardizeDataTypeLabel(pgType: string): string {
 		return "date";
 	}
 
-	if (normalized === "time" || normalized === "time without time zone" || normalized.startsWith("time(")) {
+	if (
+		normalized === "time" ||
+		normalized === "time without time zone" ||
+		normalized.startsWith("time(")
+	) {
 		return "time";
 	}
 

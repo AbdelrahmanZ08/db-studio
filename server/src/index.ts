@@ -76,6 +76,8 @@ serve(
 	},
 	(info) => {
 		console.log(`Server is running on http://localhost:${info.port}`);
-		console.log(`Database URL: ${process.env.DATABASE_URL?.split("@")[1] || "Not configured"}`);
+		console.log(
+			`Database URL: ${process.env.DATABASE_URL?.split("@")[1] || "Not configured"}`,
+		);
 	},
 );
