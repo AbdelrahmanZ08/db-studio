@@ -1,131 +1,194 @@
-import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
-import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react";
-import { useState } from "react";
-import { z } from "zod";
+import { useForm, useStore } from "@tanstack/react-form";
+import { CheckIcon, ChevronDownIcon, Settings, XIcon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { FieldError } from "@/components/common/field-error";
 import { Sheet } from "@/components/components/sheet";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useSheetStore } from "@/stores/sheet.store";
+import { type AddTableFormData, addTableSchema } from "@/types/add-table.type";
 import { cn } from "@/utils/cn";
-import { PSQL_TYPE_LABEL_MAP, PSQL_TYPES } from "@/utils/constants/add-table";
+import { ADD_TABLE_OPTIONS, ARRAY_COMPATIBLE_TYPES, PSQL_TYPES, SERIAL_TYPES } from "@/utils/constants/add-table";
 
-const { fieldContext, formContext } = createFormHookContexts();
-
-const { useAppForm } = createFormHook({
-	fieldComponents: {
-		input: Input,
-		label: Label,
-		checkbox: Checkbox,
-	},
-	formComponents: {
-		submitButton: Button,
-		resetButton: Button,
-	},
-	fieldContext,
-	formContext,
-});
+const defaultValues: AddTableFormData = {
+	tableName: "",
+	columnName: "",
+	columnType: "",
+	defaultValue: "",
+	isPrimaryKey: false,
+	isNullable: true,
+	isUnique: false,
+	isIdentity: false,
+	isArray: false,
+};
 
 export const AddTableForm = () => {
-	const [open, setOpen] = useState(false);
+	const { closeSheet } = useSheetStore();
+	const [typePickerOpen, setTypePickerOpen] = useState(false);
 
-	const form = useAppForm({
-		defaultValues: {
-			tableName: "",
-			columnName: "",
-			columnType: "",
-			defaultValue: "",
-			isPrimaryKey: false,
-		},
+	const form = useForm({
+		defaultValues,
 		validators: {
-			onChange: z.object({
-				tableName: z.string(),
-				columnName: z.string(),
-				columnType: z.string(),
-				defaultValue: z.string(),
-				isPrimaryKey: z.boolean(),
-			}),
+			onChange: addTableSchema,
 		},
-		onSubmit: ({ value }) => {
-			console.log(value);
+		onSubmit: async ({ value }) => {
+			console.log("Form submitted:", value);
+		},
+		onSubmitInvalid: ({ meta }) => {
+			console.log(meta);
 		},
 	});
 
+	const handleSubmit = () => {
+		form.handleSubmit();
+		console.log(form.state.errors);
+	};
+
+	const handleCancel = () => {
+		closeSheet();
+		form.reset();
+	};
+
+	const columnType = useStore(form.baseStore, (state) => state.values.columnType);
+	const isPrimaryKey = useStore(form.baseStore, (state) => state.values.isPrimaryKey);
+
+	// Auto-disable nullable when primary key is selected
+	useEffect(() => {
+		if (isPrimaryKey) {
+			form.setFieldValue("isNullable", false);
+		}
+	}, [isPrimaryKey]);
+
+	// Auto-disable identity when serial types are selected
+	useEffect(() => {
+		if (SERIAL_TYPES.includes(columnType)) {
+			form.setFieldValue("isIdentity", false);
+		}
+	}, [columnType]);
+
+	// Auto-disable array when type is not array-compatible
+	useEffect(() => {
+		if (columnType && !ARRAY_COMPATIBLE_TYPES.includes(columnType)) {
+			form.setFieldValue("isArray", false);
+		}
+	}, [columnType]);
+
+	// Helper function to check if an option should be visible
+	const shouldShowOption = (optionName: string) => {
+		switch (optionName) {
+			case "isNullable":
+				// Hide when primary key is selected
+				return !isPrimaryKey;
+			case "isIdentity":
+				// Hide when serial types are selected
+				return !SERIAL_TYPES.includes(columnType);
+			case "isArray":
+				// Hide when type is not array-compatible
+				return ARRAY_COMPATIBLE_TYPES.includes(columnType);
+			default:
+				return true;
+		}
+	};
+
+	const checkedCount = useStore(form.baseStore, (state) => {
+		return ADD_TABLE_OPTIONS.filter((option) => {
+			if (!shouldShowOption(option.name)) return false;
+			const value = state.values[option.name as keyof AddTableFormData];
+			return Boolean(value);
+		}).length;
+	});
+
+	const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		form.handleSubmit();
+	};
+
 	return (
 		<Sheet title="Create a new table" name="add-table">
-			<form
-				onSubmit={(e) => {
-					e.preventDefault();
-					form.handleSubmit();
-				}}
-				className="p-4 space-y-4"
-			>
-				<form.AppField
-					name="tableName"
-					children={(field) => (
-						<div className="flex flex-col gap-2">
-							<field.label htmlFor="tableName">Table Name</field.label>
-							<field.input id="tableName" />
-						</div>
-					)}
-				/>
+			<form className="p-4 space-y-6" onSubmit={handleSubmitForm}>
+				{/* Table Name Field */}
+				<form.Field name="tableName">
+					{(field) => {
+						return (
+							<div className="flex flex-col gap-2">
+								<Label htmlFor="tableName">Table Name</Label>
+								<Input
+									id="tableName"
+									value={field.state.value}
+									onChange={(e) => field.handleChange(e.target.value)}
+									className={cn(
+										"transition-colors",
+										field.state.meta.errors.length > 0 && "border-destructive ring-destructive ring-1",
+									)}
+								/>
+								<FieldError error={field.state.meta.errors[0]?.message} />
+							</div>
+						);
+					}}
+				</form.Field>
 
 				<div className="grid grid-cols-4 gap-4">
-					<form.AppField
-						name="columnName"
-						children={(field) => (
+					{/* Column Name Field */}
+					<form.Field name="columnName">
+						{(field) => (
 							<div className="flex flex-col gap-2">
-								<field.label htmlFor="columnName">Name</field.label>
-								<field.input id="columnName" placeholder="column_name" />
+								<Label htmlFor="columnName">Name</Label>
+								<Input
+									id="columnName"
+									value={field.state.value}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder="column_name"
+								/>
 							</div>
 						)}
-					/>
+					</form.Field>
 
-					<form.AppField
-						name="columnType"
-						children={(field) => (
+					{/* Column Type Field */}
+					<form.Field name="columnType">
+						{(field) => (
 							<div className="flex flex-col gap-2">
 								<Label htmlFor="columnType">Type</Label>
-								<Popover open={open} onOpenChange={setOpen}>
+								<Popover open={typePickerOpen} onOpenChange={setTypePickerOpen}>
 									<PopoverTrigger asChild>
 										<Button
 											id="columnType"
 											role="combobox"
-											aria-expanded={open}
+											aria-expanded={typePickerOpen}
 											variant="outline"
-											className="w-full justify-between border-input bg-background px-3 font-normal outline-none outline-offset-0 hover:bg-background focus-visible:outline-[3px]"
+											className="w-full justify-between border-input bg-background px-3 font-normal hover:bg-background"
 										>
-											<span className={cn("truncate", !field.state.value && "text-muted-foreground")}>
-												{field.state.value ? PSQL_TYPE_LABEL_MAP[field.state.value] : "Select type"}
-											</span>
-											<ChevronDownIcon aria-hidden="true" className="shrink-0 text-muted-foreground/80" size={16} />
+											{field.state.value || "Select type..."}
+
+											<ChevronDownIcon aria-hidden="true" className="-me-1 opacity-60" size={16} />
 										</Button>
 									</PopoverTrigger>
-									<PopoverContent align="start" className="w-full min-w-(--radix-popper-anchor-width) border-input p-0">
+									<PopoverContent align="start" className="w-full min-w-[--radix-popper-anchor-width] border-input p-0">
 										<Command>
 											<CommandInput placeholder="Search type..." />
 											<CommandList>
 												<CommandEmpty>No type found.</CommandEmpty>
-												{Object.entries(PSQL_TYPES).map(([key, value]) => (
-													<CommandGroup key={key} heading={key}>
-														{value.map((item) => (
+												{Object.entries(PSQL_TYPES).map(([category, types]) => (
+													<CommandGroup key={category} heading={category}>
+														{types.map((type) => (
 															<CommandItem
-																key={item.value}
-																value={`${item.label} ${item.description}`}
+																key={type.value}
+																value={`${type.label} ${type.description}`}
 																onSelect={() => {
-																	field.setValue(item.value);
-																	setOpen(false);
+																	field.handleChange(type.value);
+																	setTypePickerOpen(false);
 																}}
 															>
 																<div className="flex flex-col gap-1 items-start flex-1">
-																	<p className="font-medium" data-label>
-																		{item.label}
-																	</p>
-																	<span className="text-xs text-muted-foreground">{item.description}</span>
+																	<p className="font-medium">{type.label}</p>
+																	<span className="text-xs text-muted-foreground">{type.description}</span>
 																</div>
-																{field.state.value === item.value && (
+																{field.state.value === type.value && (
 																	<CheckIcon className="ml-auto shrink-0" size={16} />
 																)}
 															</CommandItem>
@@ -138,52 +201,108 @@ export const AddTableForm = () => {
 								</Popover>
 							</div>
 						)}
-					/>
+					</form.Field>
 
-					<form.AppField
-						name="defaultValue"
-						children={(field) => (
+					{/* Default Value Field */}
+					<form.Field name="defaultValue">
+						{(field) => (
 							<div className="flex flex-col gap-2">
-								<field.label htmlFor="defaultValue">Default Value</field.label>
-								<field.input id="defaultValue" placeholder="NULL" />
+								<Label htmlFor="defaultValue">Default Value</Label>
+								<Input
+									id="defaultValue"
+									value={field.state.value}
+									onChange={(e) => field.handleChange(e.target.value)}
+									placeholder="NULL"
+								/>
 							</div>
 						)}
-					/>
+					</form.Field>
 
+					{/* Primary Key + Actions */}
 					<div className="flex gap-2">
-						<form.AppField
-							name="isPrimaryKey"
-							children={(field) => (
+						<form.Field name="isPrimaryKey">
+							{(field) => (
 								<div className="flex flex-col gap-2">
-									<field.label htmlFor="isPrimaryKey">Primary</field.label>
+									<Label htmlFor="isPrimaryKey">Primary</Label>
 									<div className="flex flex-1 items-center justify-start">
-										<field.checkbox
+										<Checkbox
 											id="isPrimaryKey"
 											checked={field.state.value}
-											onCheckedChange={(value) => field.setValue(Boolean(value))}
-											size="lg"
+											onCheckedChange={(checked) => field.handleChange(Boolean(checked))}
+											className="h-5 w-5"
 										/>
 									</div>
 								</div>
 							)}
-						/>
+						</form.Field>
 
+						{/* Advanced Options Dropdown */}
+						<div className="flex items-end justify-end">
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button
+										aria-label="Advanced options"
+										type="button"
+										variant="ghost"
+										size="icon"
+										className="h-9 w-9 relative"
+									>
+										<Settings className="h-4 w-4" />
+										{checkedCount > 0 && (
+											<Badge className="absolute -top-2 leading-none left-full -translate-x-1/2 size-5 flex items-center justify-center text-xs">
+												{checkedCount > 99 ? "99+" : checkedCount}
+											</Badge>
+										)}
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent className="w-96 space-y-1" side="bottom" align="end">
+									{ADD_TABLE_OPTIONS.map((option) => {
+										if (!shouldShowOption(option.name)) return null;
+
+										return (
+											<form.Field key={option.name} name={option.name}>
+												{(field) => (
+													<Label
+														htmlFor={option.name}
+														className="flex items-start gap-3 rounded-lg p-3 cursor-pointer hover:bg-accent/50 has-checked:bg-primary-foreground has-checked:border-blue-600"
+													>
+														<Checkbox
+															id={option.name}
+															checked={Boolean(field.state.value)}
+															onCheckedChange={(checked) => field.handleChange(Boolean(checked))}
+															className="data-[state=checked]:bg-blue-600  data-[state=checked]:border-blue-600"
+														/>
+														<div className="grid gap-1.5 font-normal">
+															<p className="text-sm leading-none font-medium">{option.label}</p>
+															<p className="text-sm text-muted-foreground">{option.description}</p>
+														</div>
+													</Label>
+												)}
+											</form.Field>
+										);
+									})}
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
+
+						{/* Reset Button */}
 						<div className="flex items-end justify-center">
-							<form.resetButton type="button" variant="ghost" size="icon-sm">
-								<XIcon className="size-4" />
-							</form.resetButton>
+							<Button type="button" variant="ghost" size="icon" className="h-9 w-9">
+								<XIcon className="h-4 w-4" />
+							</Button>
 						</div>
 					</div>
 				</div>
 
+				{/* Form Actions */}
 				<div className="flex justify-end gap-2">
-					<form.resetButton type="button" variant="outline">
+					<Button type="button" variant="outline" onClick={handleCancel}>
 						Cancel
-					</form.resetButton>
+					</Button>
 
-					<form.submitButton type="submit" variant="default">
+					<Button type="submit" variant="default" onClick={handleSubmit}>
 						Save
-					</form.submitButton>
+					</Button>
 				</div>
 			</form>
 		</Sheet>

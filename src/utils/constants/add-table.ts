@@ -1,3 +1,5 @@
+import type { AddTableOption } from "@/types/add-table.type";
+
 export const PSQL_TYPES = {
 	numeric: [
 		{ value: "int2", label: "int2", description: "Signed two-byte integer" },
@@ -8,7 +10,6 @@ export const PSQL_TYPES = {
 		{ value: "numeric", label: "numeric", description: "Exact numeric of selectable precision" },
 		{ value: "serial", label: "serial", description: "Auto-incrementing four-byte integer" },
 		{ value: "bigserial", label: "bigserial", description: "Auto-incrementing eight-byte integer" },
-		{ value: "money", label: "money", description: "Currency amount" },
 	],
 	text: [
 		{ value: "text", label: "text", description: "Variable-length character string" },
@@ -40,10 +41,7 @@ export const PSQL_TYPES = {
 		{ value: "line", label: "line", description: "Infinite line on a plane" },
 		{ value: "polygon", label: "polygon", description: "Closed geometric path on a plane" },
 	],
-	other: [
-		{ value: "xml", label: "xml", description: "XML data" },
-		{ value: "array", label: "array", description: "Array of elements" },
-	],
+	other: [{ value: "xml", label: "xml", description: "XML data" }],
 };
 
 export const PSQL_TYPE_LABEL_MAP = Object.values(PSQL_TYPES)
@@ -55,3 +53,56 @@ export const PSQL_TYPE_LABEL_MAP = Object.values(PSQL_TYPES)
 		},
 		{} as Record<string, string>,
 	);
+
+// Serial types that auto-increment (incompatible with identity)
+export const SERIAL_TYPES = ["serial", "bigserial"];
+
+// Types that can be arrays
+export const ARRAY_COMPATIBLE_TYPES = [
+	"int2",
+	"int4",
+	"int8",
+	"float4",
+	"float8",
+	"numeric",
+	"text",
+	"varchar",
+	"char",
+	"uuid",
+	"boolean",
+	"date",
+	"time",
+	"timestamp",
+	"timestamptz",
+	"interval",
+	"json",
+	"jsonb",
+	"bytea",
+	"inet",
+	"cidr",
+	"macaddr",
+	"macaddr8",
+];
+
+export const ADD_TABLE_OPTIONS: AddTableOption[] = [
+	{
+		name: "isNullable",
+		label: "Is Nullable",
+		description: "Specify if the column can assume a NULL value if no value is provided",
+	},
+	{
+		name: "isUnique",
+		label: "Is Unique",
+		description: "Enforce if values in the column should be unique across rows",
+	},
+	{
+		name: "isIdentity",
+		label: "Is Identity",
+		description: "Automatically assign a sequential unique number to the column",
+	},
+	{
+		name: "isArray",
+		label: "Define as Array",
+		description: "Define your column as a variable-length multidimensional array",
+	},
+];
