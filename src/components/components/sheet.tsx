@@ -9,12 +9,14 @@ export const Sheet = ({
 	title,
 	name,
 	width = 700,
+	onClose,
 }: {
 	children: ReactNode;
 	className?: string;
 	title?: string;
 	name: SheetName;
 	width?: number;
+	onClose?: () => void;
 }) => {
 	const { closeSheet, isSheetOpen, getSheetIndex } = useSheetStore();
 	const isOpen = isSheetOpen(name);
@@ -33,7 +35,10 @@ export const Sheet = ({
 					isOpen ? "opacity-100" : "opacity-0 pointer-events-none",
 				)}
 				style={{ zIndex: zIndex }}
-				onClick={() => closeSheet(name)}
+				onClick={() => {
+					closeSheet(name);
+					onClose?.();
+				}}
 				tabIndex={0} // Use 0 so the overlay is in tab order and can be focused
 				aria-label="Close sheet overlay"
 				role="button"

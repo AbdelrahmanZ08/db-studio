@@ -17,4 +17,5 @@ export const CACHE_KEYS = {
 	TABLES_LIST: "tables-list",
 	TABLE_DATA: "table-data",
 	TABLE_COLS: "table-cols",
+	TABLE_NAMES: "table-names",
 };

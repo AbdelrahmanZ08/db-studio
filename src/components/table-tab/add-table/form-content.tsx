@@ -47,18 +47,18 @@ export const FormContent = () => {
 		.filter(({ index }) => !watchedFields?.[index]?.isPrimaryKey);
 
 	return (
-		<div className="space-y-4">
-			<div className="grid grid-cols-4 gap-4">
-				<Label>Column Name</Label>
-				<Label>Column Type</Label>
-				<Label>Default Value</Label>
-				<Label>Primary</Label>
+		<div className="space-y-2">
+			<div className="grid grid-cols-4 px-2">
+				<Label className="text-xs">Column Name</Label>
+				<Label className="text-xs">Column Type</Label>
+				<Label className="text-xs">Default Value</Label>
+				<Label className="text-xs">Primary</Label>
 			</div>
 
 			<div className="space-y-2">
 				{/* Primary Key Fields */}
 				{primaryFields.length > 0 && (
-					<div className="bg-primary/10 rounded-lg px-2 p-3 space-y-2">
+					<div className="bg-primary/10 rounded-lg px-2 py-3 space-y-2">
 						{primaryFields.map(({ field, index }) => (
 							<FieldRow
 								key={field.id}
@@ -72,7 +72,7 @@ export const FormContent = () => {
 
 				{/* Non-Primary Key Fields */}
 				{nonPrimaryFields.length > 0 && (
-					<div className="space-y-2 p-3">
+					<div className="space-y-2 px-2 py-3">
 						{nonPrimaryFields.map(({ field, index }) => (
 							<FieldRow
 								key={field.id}

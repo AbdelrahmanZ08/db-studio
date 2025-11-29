@@ -39,10 +39,15 @@ export const useCreateTable = () => {
 			return res.json();
 		},
 		onSuccess: async (data) => {
-			// Invalidate the tables list query to refetch the updated list
-			await queryClient.invalidateQueries({
-				queryKey: [CACHE_KEYS.TABLES_LIST],
-			});
+			// Invalidate the tables list and table names queries to refetch the updated lists
+			await Promise.all([
+				queryClient.invalidateQueries({
+					queryKey: [CACHE_KEYS.TABLES_LIST],
+				}),
+				queryClient.invalidateQueries({
+					queryKey: [CACHE_KEYS.TABLE_NAMES],
+				}),
+			]);
 
 			closeSheet();
 			console.log("Table created successfully:", data);

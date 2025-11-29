@@ -2,6 +2,7 @@ import { XIcon } from "lucide-react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import type { AddTableFormData } from "@/types/add-table.type";
+import { AddForeignKeyForm } from "./add-foreign-key/add-foreign-key-form";
 import { AdvancedOptions } from "./advanced-options";
 import { ColumnNameField } from "./column-name-field";
 import { ColumnTypeField } from "./column-type-field";
@@ -46,6 +47,8 @@ export const FieldRow = ({
 						<XIcon className="h-4 w-4" />
 					</Button>
 				</div>
+
+				<AddForeignKeyForm index={index} />
 			</div>
 		</div>
 	);

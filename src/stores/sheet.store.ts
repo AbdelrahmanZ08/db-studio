@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type SheetName = "add-table" | "add-row" | "add-foreign-key";
+export type SheetName = "add-table" | "add-row" | `add-foreign-key-${number}`;
 
 type SheetState = {
 	openSheets: SheetName[];
@@ -48,6 +48,7 @@ export const useSheetStore = create<SheetState>()((set, get) => ({
 					openSheets: state.openSheets.filter((s) => s !== sheetName),
 				};
 			}
+			console.log("openSheets", state.openSheets, sheetName);
 			return { openSheets: [...state.openSheets, sheetName] };
 		}),
 
