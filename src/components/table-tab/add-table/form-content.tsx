@@ -89,6 +89,7 @@ export const FormContent = () => {
 				<Button
 					type="button"
 					variant="secondary"
+					size="sm"
 					onClick={addField}
 				>
 					Add New Column

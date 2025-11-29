@@ -1,6 +1,9 @@
 import { useActiveTableStore } from "@/stores/active-table.store";
 import { cn } from "@/utils/cn";
 
+// todo: add supabase menu
+// todo: copy name & scheme, edit table, export data, delete table
+
 export const SidebarListItem = ({
 	tableName,
 	rowCount,
