@@ -1,5 +1,6 @@
 import { useFormContext } from "react-hook-form";
 import { Sheet } from "@/components/components/sheet";
+import { Button } from "@/components/ui/button";
 import { useSheetStore } from "@/stores/sheet.store";
 import type { AddTableFormData } from "@/types/add-table.type";
 import { ForeignKeySelectorField } from "./foreign-key-selector-field";
@@ -9,14 +10,9 @@ export const AddForeignKeyForm = ({ index }: { index: number }) => {
 	const { closeSheet } = useSheetStore();
 	const { setValue } = useFormContext<AddTableFormData>();
 
-	const _resetForeignKey = () => {
-		setValue(`foreignKeys.${index}`, {
-			columnName: "",
-			referencedTable: "",
-			referencedColumn: "",
-			onUpdate: "NO ACTION",
-			onDelete: "NO ACTION",
-		});
+	const resetForeignKey = () => {
+		setValue(`foreignKeys.${index}`, undefined);
+		closeSheet(`add-foreign-key-${index}`);
 	};
 
 	return (
@@ -26,12 +22,22 @@ export const AddForeignKeyForm = ({ index }: { index: number }) => {
 			width={500}
 			onClose={() => {
 				closeSheet(`add-foreign-key-${index}`);
-				// resetForeignKey();
 			}}
 		>
-			<div className="px-5 py-6 space-y-6">
-				<ReferencedTableField index={index} />
-				<ForeignKeySelectorField index={index} />
+			<div className="flex flex-col justify-between px-5 py-6 h-full flex-1">
+				<div className="space-y-6 flex-1">
+					<ReferencedTableField index={index} />
+					<ForeignKeySelectorField index={index} />
+				</div>
+
+				<Button
+					type="button"
+					variant="outline"
+					size="sm"
+					onClick={resetForeignKey}
+				>
+					<span className="text-xs">Reset Foreign Key</span>
+				</Button>
 			</div>
 		</Sheet>
 	);

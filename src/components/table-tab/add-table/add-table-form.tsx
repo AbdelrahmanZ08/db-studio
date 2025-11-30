@@ -22,15 +22,6 @@ const defaultValues: AddTableFormData = {
 			isArray: false,
 		},
 	],
-	foreignKeys: [
-		{
-			columnName: "",
-			referencedTable: "",
-			referencedColumn: "",
-			onUpdate: "NO ACTION",
-			onDelete: "NO ACTION",
-		},
-	],
 } as const;
 
 export const AddTableForm = () => {
@@ -56,6 +47,8 @@ export const AddTableForm = () => {
 		methods.reset();
 		closeSheet();
 	};
+
+	console.log(methods.getValues());
 
 	return (
 		<Sheet

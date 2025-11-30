@@ -47,7 +47,7 @@ export const Sheet = ({
 			{/* Sheet Container */}
 			<aside
 				className={cn(
-					"fixed right-0 top-0 bg-black border-l border-zinc-800 min-h-dvh",
+					"fixed right-0 top-0 bg-black border-l border-zinc-800 min-h-dvh flex flex-col",
 					"transition-transform duration-300 ease-out shadow-lg transform-gpu",
 					isOpen ? "translate-x-0" : "translate-x-full",
 					className,

@@ -3,7 +3,9 @@
 	"assist": {
 		"actions": {
 			"source": {
-				"organizeImports": "on"
+				"organizeImports": {
+					"level": "on"
+				}
 			}
 		}
 	},

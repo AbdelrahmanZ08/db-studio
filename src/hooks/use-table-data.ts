@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-
 import { getTableData } from "@/services/get-table-data.service";
 import { CACHE_KEYS } from "@/utils/constants/constans";
 import { useSearchParamsUtils } from "@/utils/search-params";

@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { SidebarHeader } from "@/components/sidebar/sidebar-header";
 import { SidebarSearch } from "@/components/sidebar/sidebar-search";
 import { TablesList } from "@/components/sidebar/sidebar-tables-list";

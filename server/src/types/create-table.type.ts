@@ -9,7 +9,23 @@ export interface FieldData {
 	isArray: boolean;
 }
 
+export type ForeignKeyAction =
+	| "CASCADE"
+	| "SET NULL"
+	| "SET DEFAULT"
+	| "RESTRICT"
+	| "NO ACTION";
+
+export interface ForeignKeyData {
+	columnName: string;
+	referencedTable: string;
+	referencedColumn: string;
+	onUpdate: ForeignKeyAction;
+	onDelete: ForeignKeyAction;
+}
+
 export interface AddTableFormData {
 	tableName: string;
 	fields: FieldData[];
+	foreignKeys?: ForeignKeyData[];
 }

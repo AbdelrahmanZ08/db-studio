@@ -4,7 +4,7 @@ import type { AddTableFormData } from "../types/index.js";
 export const createTable = async (tableData: AddTableFormData) => {
 	const client = await db.connect();
 	try {
-		const { tableName, fields } = tableData;
+		const { tableName, fields, foreignKeys } = tableData;
 
 		// Build column definitions
 		const columnDefinitions = fields.map((field) => {
@@ -43,10 +43,20 @@ export const createTable = async (tableData: AddTableFormData) => {
 			return columnDef;
 		});
 
+		// Build foreign key constraints
+		const foreignKeyConstraints =
+			foreignKeys?.map((fk) => {
+				const constraintName = `fk_${tableName}_${fk.columnName}_${fk.referencedTable}_${fk.referencedColumn}`;
+				return `CONSTRAINT "${constraintName}" FOREIGN KEY ("${fk.columnName}") REFERENCES "${fk.referencedTable}" ("${fk.referencedColumn}") ON UPDATE ${fk.onUpdate} ON DELETE ${fk.onDelete}`;
+			}) || [];
+
+		// Combine column definitions and foreign key constraints
+		const allDefinitions = [...columnDefinitions, ...foreignKeyConstraints];
+
 		// Create the table
 		const createTableSQL = `
 			CREATE TABLE "${tableName}" (
-				${columnDefinitions.join(",\n\t\t\t\t")}
+				${allDefinitions.join(",\n\t\t\t\t")}
 			);
 		`;
 

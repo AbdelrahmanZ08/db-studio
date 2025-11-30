@@ -1,5 +1,4 @@
 import { Pin, PinOff, Plus } from "lucide-react";
-
 import { usePersonalPreferencesStore } from "@/stores/personal-preferences.store";
 
 export const SidebarHeader = () => {

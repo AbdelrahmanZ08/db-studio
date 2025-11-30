@@ -1,6 +1,5 @@
 import { RefreshCcwIcon } from "lucide-react";
 import { useCallback } from "react";
-
 import { useTableCols } from "@/hooks/use-table-cols";
 import { useTableData } from "@/hooks/use-table-data";
 import { useActiveTableStore } from "@/stores/active-table.store";

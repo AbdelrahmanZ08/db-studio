@@ -1,7 +1,6 @@
 "use client";
 
 import type { Cell, Table } from "@tanstack/react-table";
-
 import {
 	LongTextCell,
 	NumberCell,

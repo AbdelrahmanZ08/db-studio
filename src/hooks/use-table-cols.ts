@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-
 import { getTableCols } from "@/services/get-table-cols.service";
 import { CACHE_KEYS } from "@/utils/constants/constans";
 

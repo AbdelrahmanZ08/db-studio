@@ -21,9 +21,6 @@ const foreignKeySchema = z.object({
 	onDelete: z
 		.enum(["CASCADE", "SET NULL", "SET DEFAULT", "RESTRICT", "NO ACTION"])
 		.default("NO ACTION"),
-	// Optional advanced features:
-	// isDeferrable: z.boolean().default(false),
-	// isInitiallyDeferred: z.boolean().default(false),
 });
 
 export const addTableSchema = z.object({
