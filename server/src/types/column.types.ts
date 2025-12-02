@@ -109,9 +109,58 @@ export function mapPostgresToDataType(pgType: string): DataTypes {
 }
 
 /**
+ * Standardized data type labels
+ */
+export const StandardizedDataType = {
+	// Numeric types
+	int: "int",
+	bigint: "bigint",
+	smallint: "smallint",
+	numeric: "numeric",
+	float: "float",
+	double: "double",
+	money: "money",
+	// Boolean
+	boolean: "boolean",
+	// Text types
+	text: "text",
+	varchar: "varchar",
+	char: "char",
+	// JSON types
+	json: "json",
+	jsonb: "jsonb",
+	xml: "xml",
+	// UUID
+	uuid: "uuid",
+	// Date/Time types
+	date: "date",
+	time: "time",
+	timestamp: "timestamp",
+	timestamptz: "timestamptz",
+	interval: "interval",
+	// Binary
+	bytea: "bytea",
+	// Network types
+	inet: "inet",
+	cidr: "cidr",
+	macaddr: "macaddr",
+	macaddr8: "macaddr8",
+	// Geometric types
+	point: "point",
+	line: "line",
+	polygon: "polygon",
+	// Complex types
+	array: "array",
+	enum: "enum",
+} as const;
+
+export type StandardizedDataType =
+	(typeof StandardizedDataType)[keyof typeof StandardizedDataType];
+
+/**
  * Maps PostgreSQL data types to standardized display labels
  */
-export function standardizeDataTypeLabel(pgType: string): string {
+export function standardizeDataTypeLabel(pgType: string): StandardizedDataType {
 	const normalized = pgType.toLowerCase().trim();
 
 	// Numeric types
@@ -122,7 +171,7 @@ export function standardizeDataTypeLabel(pgType: string): string {
 		normalized === "serial" ||
 		normalized === "serial4"
 	) {
-		return "int";
+		return StandardizedDataType.int;
 	}
 
 	if (
@@ -131,11 +180,11 @@ export function standardizeDataTypeLabel(pgType: string): string {
 		normalized === "bigserial" ||
 		normalized === "serial8"
 	) {
-		return "bigint";
+		return StandardizedDataType.bigint;
 	}
 
 	if (normalized === "smallint" || normalized === "int2") {
-		return "smallint";
+		return StandardizedDataType.smallint;
 	}
 
 	if (
@@ -144,11 +193,11 @@ export function standardizeDataTypeLabel(pgType: string): string {
 		normalized === "numeric" ||
 		normalized.startsWith("numeric(")
 	) {
-		return "numeric";
+		return StandardizedDataType.numeric;
 	}
 
 	if (normalized === "real" || normalized === "float4") {
-		return "float";
+		return StandardizedDataType.float;
 	}
 
 	if (
@@ -156,21 +205,21 @@ export function standardizeDataTypeLabel(pgType: string): string {
 		normalized === "float8" ||
 		normalized === "float"
 	) {
-		return "double";
+		return StandardizedDataType.double;
 	}
 
 	if (normalized === "money") {
-		return "money";
+		return StandardizedDataType.money;
 	}
 
 	// Boolean
 	if (normalized === "boolean" || normalized === "bool") {
-		return "boolean";
+		return StandardizedDataType.boolean;
 	}
 
 	// Text types
 	if (normalized === "text") {
-		return "text";
+		return StandardizedDataType.text;
 	}
 
 	if (
@@ -178,7 +227,7 @@ export function standardizeDataTypeLabel(pgType: string): string {
 		normalized.startsWith("varchar") ||
 		normalized.startsWith("character varying(")
 	) {
-		return "varchar";
+		return StandardizedDataType.varchar;
 	}
 
 	if (
@@ -187,30 +236,30 @@ export function standardizeDataTypeLabel(pgType: string): string {
 		normalized.startsWith("character(") ||
 		normalized === "bpchar"
 	) {
-		return "char";
+		return StandardizedDataType.char;
 	}
 
 	// JSON types
 	if (normalized === "json") {
-		return "json";
+		return StandardizedDataType.json;
 	}
 
 	if (normalized === "jsonb") {
-		return "jsonb";
+		return StandardizedDataType.jsonb;
 	}
 
 	if (normalized === "xml") {
-		return "xml";
+		return StandardizedDataType.xml;
 	}
 
 	// UUID
 	if (normalized === "uuid") {
-		return "uuid";
+		return StandardizedDataType.uuid;
 	}
 
 	// Date/Time types
 	if (normalized === "date") {
-		return "date";
+		return StandardizedDataType.date;
 	}
 
 	if (
@@ -218,7 +267,7 @@ export function standardizeDataTypeLabel(pgType: string): string {
 		normalized === "time without time zone" ||
 		normalized.startsWith("time(")
 	) {
-		return "time";
+		return StandardizedDataType.time;
 	}
 
 	if (
@@ -226,7 +275,7 @@ export function standardizeDataTypeLabel(pgType: string): string {
 		normalized === "timestamp without time zone" ||
 		normalized.startsWith("timestamp(")
 	) {
-		return "timestamp";
+		return StandardizedDataType.timestamp;
 	}
 
 	if (
@@ -234,58 +283,58 @@ export function standardizeDataTypeLabel(pgType: string): string {
 		normalized === "timestamptz" ||
 		normalized.startsWith("timestamp with time zone(")
 	) {
-		return "timestamptz";
+		return StandardizedDataType.timestamptz;
 	}
 
 	if (normalized === "interval" || normalized.startsWith("interval")) {
-		return "interval";
+		return StandardizedDataType.interval;
 	}
 
 	// Binary
 	if (normalized === "bytea") {
-		return "bytea";
+		return StandardizedDataType.bytea;
 	}
 
 	// Network types
 	if (normalized === "inet") {
-		return "inet";
+		return StandardizedDataType.inet;
 	}
 
 	if (normalized === "cidr") {
-		return "cidr";
+		return StandardizedDataType.cidr;
 	}
 
 	if (normalized === "macaddr") {
-		return "macaddr";
+		return StandardizedDataType.macaddr;
 	}
 
 	if (normalized === "macaddr8") {
-		return "macaddr8";
+		return StandardizedDataType.macaddr8;
 	}
 
 	// Geometric types
 	if (normalized === "point") {
-		return "point";
+		return StandardizedDataType.point;
 	}
 
 	if (normalized === "line") {
-		return "line";
+		return StandardizedDataType.line;
 	}
 
 	if (normalized === "polygon") {
-		return "polygon";
+		return StandardizedDataType.polygon;
 	}
 
 	// Array types
 	if (normalized.startsWith("array") || normalized.includes("[]")) {
-		return "array";
+		return StandardizedDataType.array;
 	}
 
 	// User-defined types (enums)
 	if (normalized.startsWith("user-defined") || normalized === "enum") {
-		return "enum";
+		return StandardizedDataType.enum;
 	}
 
 	// Default: return the original type
-	return pgType;
+	return StandardizedDataType.text;
 }

@@ -1,8 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { Controller, type FieldErrors, FormProvider, useForm } from "react-hook-form";
+import { type FieldErrors, FormProvider, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
 	Sheet,
 	SheetClose,
@@ -12,10 +10,11 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from "@/components/ui/sheet";
-import { useCreateRecord } from "@/hooks/use-create-record";
+import { type AddRecordFormData, useCreateRecord } from "@/hooks/use-create-record";
 import { queries } from "@/providers/queries";
 import { useActiveTableStore } from "@/stores/active-table.store";
 import { useSheetStore } from "@/stores/sheet.store";
+import { AddRecordField } from "./add-record-field";
 
 // TODO: Add loading skeleton
 // TODO: Add a dropdown for the primary key
@@ -36,7 +35,7 @@ export const AddRecordForm = () => {
 	const { createRecord, isCreatingRecord } = useCreateRecord();
 	const methods = useForm();
 
-	const onSubmit = async (data: Record<string, string>) => {
+	const onSubmit = async (data: AddRecordFormData) => {
 		console.log(data);
 		try {
 			await createRecord(data);
@@ -46,7 +45,7 @@ export const AddRecordForm = () => {
 		}
 	};
 
-	const onError = (errors: FieldErrors<Record<string, string>>) => {
+	const onError = (errors: FieldErrors<AddRecordFormData>) => {
 		console.log(errors);
 	};
 
@@ -83,28 +82,9 @@ export const AddRecordForm = () => {
 						<div className="flex flex-col gap-6 py-6 px-4 overflow-y-auto">
 							{tableCols && tableCols.length > 0 && !isLoadingTableCols
 								? tableCols.map((col) => (
-										<Controller
+										<AddRecordField
 											key={col.columnName}
-											control={methods.control}
-											name={col.columnName}
-											render={({ field }) => (
-												<div className="grid grid-cols-3">
-													<div className="col-span-1 flex flex-col gap-1">
-														<Label htmlFor={col.columnName}>{col.columnName}</Label>
-														<span className="text-xs text-muted-foreground">
-															{col.dataTypeLabel}
-														</span>
-													</div>
-													<div className="col-span-2">
-														<Input
-															id={col.columnName}
-															placeholder={col.columnDefault || ""}
-															{...field}
-															disabled={isCreatingRecord}
-														/>
-													</div>
-												</div>
-											)}
+											{...col}
 										/>
 									))
 								: null}

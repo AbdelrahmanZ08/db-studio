@@ -1,16 +1,6 @@
-import type { DataType } from "@/types/table-grid.type";
+import type { ColumnInfo as ServerColumnInfo } from "../../server/src/dao/table-columns.dao";
 
-export interface ColumnInfo {
-	columnName: string;
-	dataType: DataType;
-	dataTypeLabel: string;
-	isNullable: boolean;
-	columnDefault: string | null;
-	isPrimaryKey: boolean;
-	isForeignKey: boolean;
-	referencedTable: string | null;
-	referencedColumn: string | null;
-}
+export type ColumnInfo = ServerColumnInfo;
 
 export const getTableCols = async (tableName: string | null): Promise<ColumnInfo[]> => {
 	if (!tableName) {

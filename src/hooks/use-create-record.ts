@@ -4,13 +4,17 @@ import { useActiveTableStore } from "@/stores/active-table.store";
 import { useSheetStore } from "@/stores/sheet.store";
 import { CACHE_KEYS } from "@/utils/constants/constans";
 
+export interface AddRecordFormData {
+	[key: string]: string;
+}
+
 export const useCreateRecord = () => {
 	const queryClient = useQueryClient();
 	const { activeTable } = useActiveTableStore();
 	const { closeSheet } = useSheetStore();
 
 	const { mutateAsync: createRecordMutation, isPending: isCreatingRecord } = useMutation({
-		mutationFn: async (data: Record<string, string>) => {
+		mutationFn: async (data: AddRecordFormData) => {
 			const res = await fetch("/api/records", {
 				method: "POST",
 				headers: {
@@ -45,7 +49,7 @@ export const useCreateRecord = () => {
 		},
 	});
 
-	const createRecord = async (data: Record<string, string>) => {
+	const createRecord = async (data: AddRecordFormData) => {
 		return toast.promise(createRecordMutation(data), {
 			loading: "Creating record...",
 			success: (result) => result.message || "Record created successfully",

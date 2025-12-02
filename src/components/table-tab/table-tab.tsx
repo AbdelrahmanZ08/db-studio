@@ -1,5 +1,5 @@
 import { useActiveTableStore } from "@/stores/active-table.store";
-import { AddRecordForm } from "./add-record";
+import { AddRecordForm } from "./add-table/add-record/add-record-form.tsx";
 import { TableView } from "./table-view";
 
 export const TableTab = () => {
