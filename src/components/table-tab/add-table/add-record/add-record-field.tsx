@@ -1,3 +1,4 @@
+import { Link } from "lucide-react";
 import { Controller, type ControllerRenderProps, useFormContext } from "react-hook-form";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
@@ -10,18 +11,75 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { AddRecordFormData } from "@/hooks/use-create-record";
 import type { ColumnInfo } from "@/services/get-table-cols.service";
+import { useSheetStore } from "@/stores/sheet.store";
 
 export const AddRecordField = ({
 	columnName,
 	dataTypeLabel,
 	columnDefault,
 	enumValues,
+	isForeignKey,
+	referencedTable,
+	referencedColumn,
 }: ColumnInfo) => {
 	const { control } = useFormContext<AddRecordFormData>();
+	const { openSheet, setRecordReference } = useSheetStore();
 
 	const renderInputField = (field: ControllerRenderProps<AddRecordFormData, string>) => {
+		if (isForeignKey) {
+			return (
+				<div className="flex flex-col gap-2">
+					<div className="flex">
+						<Input
+							id={columnName}
+							placeholder={columnDefault ?? ""}
+							className="-me-px flex-1 rounded-e-none shadow-none focus-visible:z-10"
+							{...field}
+						/>
+
+						<TooltipProvider delayDuration={0}>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<button
+										aria-label="Go to table"
+										className="inline-flex w-9 items-center justify-center rounded-e-md border  border-input bg-background text-muted-foreground/80 text-sm outline-none transition-[color,box-shadow] hover:bg-accent hover:text-accent-foreground focus:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50"
+										type="button"
+										onClick={() => {
+											if (referencedTable && columnName && referencedColumn) {
+												setRecordReference(referencedTable, columnName, referencedColumn);
+											}
+											openSheet("record-reference");
+										}}
+									>
+										<Link
+											aria-hidden="true"
+											className="size-4"
+											size={16}
+										/>
+									</button>
+								</TooltipTrigger>
+								<TooltipContent className="px-2 py-1 text-xs">Go to table</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					</div>
+
+					<span className="text-xs text-muted-foreground">
+						Has a foreign key relation to{" "}
+						<span className="font-mono text-primary-foreground">{referencedTable}</span>{" "}
+						table
+					</span>
+				</div>
+			);
+		}
+
 		// Number types (int, bigint, smallint, numeric, float, double, money)
 		if (
 			dataTypeLabel === "int" ||
@@ -90,6 +148,7 @@ export const AddRecordField = ({
 			dataTypeLabel === "timestamp" ||
 			dataTypeLabel === "timestamptz"
 		) {
+			// todo: add arrow down for the date picker
 			return (
 				<DatePicker
 					value={field.value ? new Date(field.value) : undefined}

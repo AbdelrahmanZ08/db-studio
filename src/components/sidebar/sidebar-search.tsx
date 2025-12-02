@@ -2,6 +2,8 @@ import { Search } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useSheetStore } from "@/stores/sheet.store";
 
+// todo: use react-shortcuts
+
 export const SidebarSearch = ({
 	setSearchTerm,
 	searchTerm,

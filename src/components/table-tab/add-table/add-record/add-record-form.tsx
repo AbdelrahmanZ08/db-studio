@@ -15,6 +15,7 @@ import { queries } from "@/providers/queries";
 import { useActiveTableStore } from "@/stores/active-table.store";
 import { useSheetStore } from "@/stores/sheet.store";
 import { AddRecordField } from "./add-record-field";
+import { RecordReferenceSheet } from "./record-reference-sheet";
 
 // TODO: Add loading skeleton
 // TODO: Add a dropdown for the primary key
@@ -107,6 +108,9 @@ export const AddRecordForm = () => {
 							</Button>
 						</SheetFooter>
 					</form>
+
+					{/* Record reference sheet */}
+					<RecordReferenceSheet />
 				</FormProvider>
 			</SheetContent>
 		</Sheet>

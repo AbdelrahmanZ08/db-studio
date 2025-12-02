@@ -69,8 +69,10 @@ export function DatePicker({
 					)}
 					disabled={disabled}
 				>
-					<CalendarIcon className="mr-2 size-4" />
-					{value ? format(value, "PPP") : <span>{placeholder}</span>}
+					<CalendarIcon className="mr-2 size-4 shrink-0" />
+					<span className="flex-1">
+						{value ? format(value, "dd/MM/yyyy") : placeholder}
+					</span>
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent

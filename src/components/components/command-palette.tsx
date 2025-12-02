@@ -30,7 +30,8 @@ import {
 	Wand2,
 	Zap,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import { toast } from "sonner";
 import {
 	CommandDialog,
@@ -54,18 +55,6 @@ export function CommandPalette() {
 	const { tablesList, isLoadingTables } = useTablesList();
 	const [open, setOpen] = useState(false);
 
-	useEffect(() => {
-		const down = (e: KeyboardEvent) => {
-			if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
-				e.preventDefault();
-				setOpen((open) => !open);
-			}
-		};
-
-		document.addEventListener("keydown", down);
-		return () => document.removeEventListener("keydown", down);
-	}, []);
-
 	const handleAction = (action: () => void, message?: string) => {
 		setOpen(false);
 		action();
@@ -73,6 +62,9 @@ export function CommandPalette() {
 			toast.success(message);
 		}
 	};
+
+	// Hotkeys for command palette
+	useHotkeys("ctrl+k, meta+k", () => setOpen((open) => !open));
 
 	return (
 		<CommandDialog

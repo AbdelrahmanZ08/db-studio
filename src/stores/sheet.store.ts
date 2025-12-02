@@ -1,19 +1,38 @@
 import { create } from "zustand";
 
-export type SheetName = "add-table" | "add-row" | `add-foreign-key-${number}`;
+export type SheetName =
+	| "add-table"
+	| "add-row"
+	| `add-foreign-key-${number}`
+	| "record-reference";
 
 type SheetState = {
 	openSheets: SheetName[];
+	recordReferenceData: {
+		tableName: string | null;
+		columnName: string | null;
+		referencedColumn: string | null;
+	};
 	openSheet: (sheetName: SheetName) => void;
 	closeSheet: (sheetName?: SheetName) => void;
 	closeAllSheets: () => void;
 	toggleSheet: (sheetName: SheetName) => void;
 	isSheetOpen: (sheetName: SheetName) => boolean;
 	getSheetIndex: (sheetName: SheetName) => number;
+	setRecordReference: (
+		tableName: string,
+		columnName: string,
+		referencedColumn: string,
+	) => void;
 };
 
 export const useSheetStore = create<SheetState>()((set, get) => ({
 	openSheets: [],
+	recordReferenceData: {
+		tableName: null,
+		columnName: null,
+		referencedColumn: null,
+	},
 
 	openSheet: (sheetName: SheetName) =>
 		set((state) => {
@@ -55,4 +74,7 @@ export const useSheetStore = create<SheetState>()((set, get) => ({
 	isSheetOpen: (sheetName: SheetName) => get().openSheets.includes(sheetName),
 
 	getSheetIndex: (sheetName: SheetName) => get().openSheets.indexOf(sheetName),
+
+	setRecordReference: (tableName: string, columnName: string, referencedColumn: string) =>
+		set({ recordReferenceData: { tableName, columnName, referencedColumn } }),
 }));
