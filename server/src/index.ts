@@ -5,6 +5,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { createTable } from "./dao/create-table.dao.js";
+import { insertRecord } from "./dao/insert-record.dao.js";
 import { getTableColumns } from "./dao/table-columns.dao.js";
 import { getTablesList } from "./dao/table-list.dao.js";
 import { getTableData } from "./dao/tables-data.dao.js";
@@ -79,6 +80,47 @@ app.post("/tables", async (c) => {
 });
 
 /**
+ * Create Record
+ * POST /records - Insert a new record into a table
+ * Body: { tableName: string, ...recordData }
+ */
+app.post("/records", async (c) => {
+	try {
+		const body = await c.req.json();
+		const { tableName, ...recordData } = body;
+
+		if (!tableName) {
+			return c.json(
+				{
+					success: false,
+					message: "tableName is required",
+				},
+				400,
+			);
+		}
+
+		console.log("POST /records body", { tableName, recordData });
+		const result = await insertRecord({ tableName, data: recordData });
+		console.log("POST /records", result);
+		return c.json(result);
+	} catch (error) {
+		console.error("POST /records error:", error);
+		const errorDetail =
+			error && typeof error === "object" && "detail" in error
+				? (error as { detail?: string }).detail
+				: undefined;
+		return c.json(
+			{
+				success: false,
+				message: error instanceof Error ? error.message : "Failed to create record",
+				detail: errorDetail,
+			},
+			500,
+		);
+	}
+});
+
+/**
  * Root
  * GET / - Get the root
  */
@@ -88,6 +130,7 @@ app.get("/", (c) => {
 		tables: "/tables",
 		columns: "/tables/:tableName/columns",
 		data: "/tables/:tableName/data",
+		records: "POST /records",
 	});
 });
 

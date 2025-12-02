@@ -1,8 +1,9 @@
+import { useQuery } from "@tanstack/react-query";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { useDataGrid } from "@/hooks/use-data-grid";
-import { useTableCols } from "@/hooks/use-table-cols";
 import { useTableData } from "@/hooks/use-table-data";
+import { queries } from "@/providers/queries";
 import { useActiveTableStore } from "@/stores/active-table.store";
 import { useSearchParamsUtils } from "@/utils/search-params";
 import { getCellVariant } from "@/utils/table-grid.helpers";
@@ -17,7 +18,9 @@ export const TableView = () => {
 	const pageSize = getParamAsNumber("pageSize") ?? 50;
 	const page = getParamAsNumber("page") ?? 1;
 
-	const { tableCols, isLoadingTableCols } = useTableCols(activeTable);
+	const { data: tableCols, isLoading: isLoadingTableCols } = useQuery(
+		queries.tableCols(activeTable ?? ""),
+	);
 	const { tableData, isLoadingTableData } = useTableData(activeTable);
 
 	const columns = useMemo<ColumnDef<Record<string, unknown>>[]>(() => {

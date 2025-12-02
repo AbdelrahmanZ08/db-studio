@@ -7,6 +7,9 @@ export interface ColumnInfo {
 	isNullable: boolean;
 	columnDefault: string | null;
 	isPrimaryKey: boolean;
+	isForeignKey: boolean;
+	referencedTable: string | null;
+	referencedColumn: string | null;
 }
 
 export const getTableCols = async (tableName: string | null): Promise<ColumnInfo[]> => {

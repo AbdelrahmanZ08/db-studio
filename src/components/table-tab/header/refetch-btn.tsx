@@ -1,13 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import { RefreshCcwIcon } from "lucide-react";
 import { useCallback } from "react";
-import { useTableCols } from "@/hooks/use-table-cols";
 import { useTableData } from "@/hooks/use-table-data";
+import { queries } from "@/providers/queries";
 import { useActiveTableStore } from "@/stores/active-table.store";
 
 export const RefetchBtn = () => {
 	const { activeTable } = useActiveTableStore();
 	const { refetchTableData } = useTableData(activeTable ?? "");
-	const { refetchTableCols } = useTableCols(activeTable ?? "");
+	const { refetch: refetchTableCols } = useQuery(queries.tableCols(activeTable ?? ""));
 
 	const handleRefetch = useCallback(() => {
 		Promise.all([refetchTableData(), refetchTableCols()]);

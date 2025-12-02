@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import {
 	Select,
@@ -6,7 +7,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { useTableCols } from "@/hooks/use-table-cols";
+import { queries } from "@/providers/queries";
 import type { AddTableFormData } from "@/types/add-table.type";
 
 export const ReferencedColField = ({ index }: { index: number }) => {
@@ -15,8 +16,9 @@ export const ReferencedColField = ({ index }: { index: number }) => {
 		control,
 		name: `foreignKeys.${index}`,
 	});
-	const { tableCols, isLoadingTableCols } = useTableCols(
-		foreignKeyData?.referencedTable || null,
+
+	const { data: tableCols, isLoading: isLoadingTableCols } = useQuery(
+		queries.tableCols(foreignKeyData?.referencedTable || ""),
 	);
 
 	if (!foreignKeyData) return null;

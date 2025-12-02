@@ -50,6 +50,8 @@ export function DataGridColumnHeader<TData, TValue>({
 	const isAnyColumnResizing = table.getState().columnSizingInfo.isResizingColumn;
 	const dataTypeLabel = column.columnDef.meta?.dataTypeLabel;
 	const isPrimaryKey = column.columnDef.meta?.isPrimaryKey;
+	// todo: add isForeignKey to the column meta type
+	// const isForeignKey = column.columnDef.meta?.isForeignKey;
 
 	const pinnedPosition = column.getIsPinned();
 	const isPinnedLeft = pinnedPosition === "left";
@@ -121,6 +123,9 @@ export function DataGridColumnHeader<TData, TValue>({
 				>
 					<div className="flex min-w-0 flex-1 items-center justify-between gap-1 overflow-hidden">
 						<div className="flex items-center gap-1">
+							{/* {isForeignKey && (
+								<LinkIcon className="size-3	shrink-0 text-muted-foreground" />
+							)} */}
 							{isPrimaryKey && (
 								<KeyIcon className="size-3	shrink-0 text-muted-foreground" />
 							)}

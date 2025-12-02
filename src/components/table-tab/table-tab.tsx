@@ -1,4 +1,5 @@
 import { useActiveTableStore } from "@/stores/active-table.store";
+import { AddRecordForm } from "./add-record";
 import { TableView } from "./table-view";
 
 export const TableTab = () => {
@@ -14,6 +15,9 @@ export const TableTab = () => {
 	return (
 		<div className="flex flex-col flex-1 h-full overflow-hidden">
 			<TableView key={activeTable} />
+
+			{/* sheets components */}
+			<AddRecordForm />
 		</div>
 	);
 };
