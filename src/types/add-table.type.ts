@@ -40,7 +40,7 @@ export const addTableSchema = z.object({
 			}
 			return false;
 		});
-	}, z.array(foreignKeySchema).optional()),
+	}, z.array(foreignKeySchema).default([])),
 });
 
 export type FieldData = z.infer<typeof fieldSchema>;

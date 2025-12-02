@@ -204,9 +204,9 @@ function useDataGrid<TData>({
 			selectionRange:
 				columnIds.length > 0 && rowCount > 0 && firstColumnId && lastColumnId
 					? {
-							start: { rowIndex: 0, columnId: firstColumnId },
-							end: { rowIndex: rowCount - 1, columnId: lastColumnId },
-						}
+						start: { rowIndex: 0, columnId: firstColumnId },
+						end: { rowIndex: rowCount - 1, columnId: lastColumnId },
+					}
 					: null,
 			isSelecting: false,
 		});
@@ -1483,7 +1483,7 @@ function useDataGrid<TData>({
 	}, [autoFocus, data.length, columns.length, store, navigableColumnIds, focusCell]);
 
 	useEffect(() => {
-		function onOutsideClick(event: MouseEvent) {
+		function onOutsideClick(event: globalThis.MouseEvent) {
 			if (event.button === 2) {
 				return;
 			}

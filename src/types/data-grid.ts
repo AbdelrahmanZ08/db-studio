@@ -7,25 +7,25 @@ export interface CellSelectOption {
 
 export type CellVariant =
 	| {
-			variant: "short-text";
-	  }
+		variant: "short-text";
+	}
 	| {
-			variant: "long-text";
-	  }
+		variant: "long-text";
+	}
 	| {
-			variant: "number";
-	  }
+		variant: "number";
+	}
 	| {
-			variant: "select";
-			options: CellSelectOption[];
-	  }
+		variant: "select";
+		options: CellSelectOption[];
+	}
 	| {
-			variant: "multi-select";
-			options: CellSelectOption[];
-	  }
+		variant: "multi-select";
+		options: CellSelectOption[];
+	}
 	| {
-			variant: "boolean";
-	  };
+		variant: "boolean";
+	};
 
 export interface UpdateCell {
 	rowIndex: number;
@@ -44,6 +44,8 @@ declare module "@tanstack/react-table" {
 
 	// biome-ignore lint/correctness/noUnusedVariables: TData is used in the TableMeta interface
 	interface TableMeta<TData extends RowData> {
+		rowHeight?: string;
+		onRowHeightChange?: (height: string) => void;
 		dataGridRef?: React.RefObject<HTMLElement | null>;
 		focusedCell?: CellPosition | null;
 		editingCell?: CellPosition | null;

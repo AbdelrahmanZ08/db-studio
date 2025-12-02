@@ -1,29 +1,29 @@
 import { db } from "../db.js";
 import {
-	type DataTypes,
-	mapPostgresToDataType,
-	type StandardizedDataType,
-	standardizeDataTypeLabel,
+  type DataTypes,
+  mapPostgresToDataType,
+  type StandardizedDataType,
+  standardizeDataTypeLabel,
 } from "../types/column.types.js";
 
 export interface ColumnInfo {
-	columnName: string;
-	dataType: DataTypes;
-	dataTypeLabel: StandardizedDataType;
-	isNullable: boolean;
-	columnDefault: string | null;
-	isPrimaryKey: boolean;
-	isForeignKey: boolean;
-	referencedTable: string | null;
-	referencedColumn: string | null;
-	enumValues: string[] | null;
+  columnName: string;
+  dataType: DataTypes;
+  dataTypeLabel: StandardizedDataType;
+  isNullable: boolean;
+  columnDefault: string | null;
+  isPrimaryKey: boolean;
+  isForeignKey: boolean;
+  referencedTable: string | null;
+  referencedColumn: string | null;
+  enumValues: string[] | null;
 }
 
 export const getTableColumns = async (tableName: string): Promise<ColumnInfo[]> => {
-	const client = await db.connect();
-	try {
-		const res = await client.query(
-			`
+  const client = await db.connect();
+  try {
+    const res = await client.query(
+      `
       SELECT 
         c.column_name as "columnName",
         c.data_type as "dataType",
@@ -73,36 +73,36 @@ export const getTableColumns = async (tableName: string): Promise<ColumnInfo[]> 
         AND c.table_name = $1
       ORDER BY c.ordinal_position;
     `,
-			[tableName],
-		);
+      [tableName],
+    );
 
-		return res.rows.map((r) => {
-			// Parse enumValues to always return string[] | null
-			let parsedEnumValues: string[] | null = null;
-			if (r.enumValues) {
-				if (Array.isArray(r.enumValues)) {
-					// Already an array, use as-is
-					parsedEnumValues = r.enumValues;
-				} else if (typeof r.enumValues === "string") {
-					// Parse PostgreSQL array format: "{VALUE1,VALUE2,VALUE3}"
-					parsedEnumValues = r.enumValues.replace(/[{}]/g, "").split(",").filter(Boolean);
-				}
-			}
+    return res.rows.map((r: any) => {
+      // Parse enumValues to always return string[] | null
+      let parsedEnumValues: string[] | null = null;
+      if (r.enumValues) {
+        if (Array.isArray(r.enumValues)) {
+          // Already an array, use as-is
+          parsedEnumValues = r.enumValues;
+        } else if (typeof r.enumValues === "string") {
+          // Parse PostgreSQL array format: "{VALUE1,VALUE2,VALUE3}"
+          parsedEnumValues = r.enumValues.replace(/[{}]/g, "").split(",").filter(Boolean);
+        }
+      }
 
-			return {
-				columnName: r.columnName,
-				dataType: mapPostgresToDataType(r.dataType),
-				dataTypeLabel: standardizeDataTypeLabel(r.dataType),
-				isNullable: r.isNullable,
-				columnDefault: r.columnDefault,
-				isPrimaryKey: r.isPrimaryKey,
-				isForeignKey: r.isForeignKey,
-				referencedTable: r.referencedTable,
-				referencedColumn: r.referencedColumn,
-				enumValues: parsedEnumValues,
-			};
-		});
-	} finally {
-		client.release();
-	}
+      return {
+        columnName: r.columnName,
+        dataType: mapPostgresToDataType(r.dataType),
+        dataTypeLabel: standardizeDataTypeLabel(r.dataType),
+        isNullable: r.isNullable,
+        columnDefault: r.columnDefault,
+        isPrimaryKey: r.isPrimaryKey,
+        isForeignKey: r.isForeignKey,
+        referencedTable: r.referencedTable,
+        referencedColumn: r.referencedColumn,
+        enumValues: parsedEnumValues,
+      };
+    });
+  } finally {
+    client.release();
+  }
 };

@@ -43,6 +43,7 @@ const defaultValues: AddTableFormData = {
 		// 	isArray: false,
 		// }
 	],
+	foreignKeys: [],
 } as const;
 
 export const AddTableForm = () => {

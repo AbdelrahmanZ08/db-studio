@@ -12,6 +12,8 @@ import { TableHeader } from "./header/table-header";
 import { TableEmpty } from "./table-empty";
 import { TableFooter } from "./table-footer";
 
+import type { DataType } from "@/types/table-grid.type";
+
 export const TableView = () => {
 	const { activeTable } = useActiveTableStore();
 	const { getParamAsNumber, setParams } = useSearchParamsUtils();
@@ -30,7 +32,7 @@ export const TableView = () => {
 				accessorKey: col.columnName,
 				header: col.columnName,
 				meta: {
-					cell: getCellVariant(col.dataType),
+					cell: getCellVariant(col.dataType as DataType),
 					dataTypeLabel: col.dataTypeLabel,
 					isPrimaryKey: col.isPrimaryKey,
 				},
